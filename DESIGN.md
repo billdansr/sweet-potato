@@ -11,7 +11,7 @@
 ## Daftar Isi
 - [1. Pendahuluan](#1-pendahuluan)
 - [1.1 Latar Belakang](#11-latar-belakang)
-- [1.2 Tujuan](#12-tujuan))
+- [1.2 Tujuan](#12-tujuan)
 - [1.3 Deskripsi Aplikasi](#13-deskripsi-aplikasi)
 - [2. Kebutuhan Sistem](#2-kebutuhan-sistem)
 - [2.1 Kebutuhan Fungsional](#21-kebutuhan-fungsional)

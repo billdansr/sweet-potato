@@ -26,11 +26,11 @@ Industri game di Indonesia sedang mengalami perkembangan, bahkan Peraturan Presi
 
 ### 1.2 Tujuan
 
-Mengakselerasi industri gim Indonesia
+Mengakselerasi industri gim Indonesia.
 
 ### 1.3. Deskripsi Aplikasi
 
-Platform/forum reviu gim-gim Indonesia sesama gamers dan expert
+Platform/forum reviu gim-gim Indonesia sesama gamers dan expert.
 
 ## 2 Kebutuhan Sistem
 

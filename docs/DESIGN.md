@@ -36,7 +36,7 @@ Platform/forum reviu gim-gim Indonesia sesama gamers dan expert.
 
 ### 2.1 Kebutuhan Fungsional
 
-*** USE CASE DIAGRAM IS UNDER CONSTRUCTION ***
+![asdasdas](./Sweet%20Potato%20Use%20Case%20Diagram.png)
 
 ### 2.2 Kebutuhan Non-Fungsional
 

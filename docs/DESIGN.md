@@ -37,7 +37,7 @@ Platform/forum reviu gim-gim Indonesia sesama gamers dan expert.
 
 ### 2.1 Kebutuhan Fungsional
 
-![Use Case Diagram](./Sweet%20Potato%20Use%20Case%20Diagram.png)
+![Use Case Diagram](./Use%20Case%20Diagram.png)
 
 ### 2.2 Kebutuhan Non-Fungsional
 
@@ -49,4 +49,4 @@ Platform/forum reviu gim-gim Indonesia sesama gamers dan expert.
 
 ## 3. Arsitektur Sistem
 
-*** SYSTEM ARCHITECTURE IS UNDER CONSTRUCTION ***
+![System Architecture Model](./System%20Architecture%20Model.png)

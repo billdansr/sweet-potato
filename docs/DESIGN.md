@@ -9,6 +9,7 @@
 | 1.0 | 2024-10-20 | Draft pertama SDD. |
 
 ## Daftar Isi
+- [Daftar Isi](#daftar-isi)
 - [1. Pendahuluan](#1-pendahuluan)
 - [1.1 Latar Belakang](#11-latar-belakang)
 - [1.2 Tujuan](#12-tujuan)
@@ -40,7 +41,11 @@ Platform/forum reviu gim-gim Indonesia sesama gamers dan expert.
 
 ### 2.2 Kebutuhan Non-Fungsional
 
-*** NON-FUNCTIONAL REQUIREMENT IS UNDER CONSTRUCTION ***
+- Memiliki UI mudah dipahami oleh End User.
+- Memiliki tingkat learnability yang baik.
+- Memiliki compatibility yang baik.
+- Mudah diperbaharui.
+- Mudah dilakukan maintenance.
 
 ## 3. Arsitektur Sistem
 

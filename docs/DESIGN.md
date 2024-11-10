@@ -50,3 +50,7 @@ Platform/forum reviu gim-gim Indonesia sesama gamers dan expert.
 ## 3. Arsitektur Sistem
 
 ![System Architecture Model](./System%20Architecture%20Model.png)
+
+## 4. Database Design
+
+![Entity Relationship Diagram](./Entity%20Relationship%20Diagram.png)

@@ -51,6 +51,12 @@ Platform/forum reviu gim-gim Indonesia sesama gamers dan expert.
 
 ![System Architecture Model](./System%20Architecture%20Model.png)
 
-## 4. Database Design
+## 4. Frontend Design
+
+## 5. Backend Design
+
+### 5.1 Database Design
 
 ![Entity Relationship Diagram](./Entity%20Relationship%20Diagram.png)
+
+### 5.2 API Design

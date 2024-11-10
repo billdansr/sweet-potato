@@ -8,16 +8,27 @@
 |-------|---------|-------------|
 | 1.0 | 2024-10-20 | Draft pertama SDD. |
 
+***
+
 ## Daftar Isi
-- [Daftar Isi](#daftar-isi)
-- [1. Pendahuluan](#1-pendahuluan)
-- [1.1 Latar Belakang](#11-latar-belakang)
-- [1.2 Tujuan](#12-tujuan)
-- [1.3 Deskripsi Aplikasi](#13-deskripsi-aplikasi)
-- [2. Kebutuhan Sistem](#2-kebutuhan-sistem)
-- [2.1 Kebutuhan Fungsional](#21-kebutuhan-fungsional)
-- [2.2 Kebutuhan Non-Fungsional](#22-kebutuhan-non-fungsional)
-- [3. Arsitektur Sistem](#3-arsitektur-sistem)
+
+1. [Pendahuluan](#1-pendahuluan)
+    1. [Latar Belakang](#11-latar-belakang)
+    2. [Tujuan](#12-tujuan)
+    3. [Deskripsi Aplikasi](#13-deskripsi-aplikasi)
+    4. [Asumsi dan Batasan](#14-asumsi-dan-batasan)
+    5. [Referensi](#15-referensi)
+    6. [Definisi Istilah](#16-definisi-istilah)
+2. [Kebutuhan Sistem](#2-kebutuhan-sistem)
+    1. [Kebutuhan Fungsional](#21-kebutuhan-fungsional)
+    2. [Kebutuhan Non-Fungsional](#22-kebutuhan-non-fungsional)
+3. [Arsitektur Sistem](#3-arsitektur-sistem)
+4. [Frontend Design](#4-frontend-design)
+5. [Backend Design](#5-backend-design)
+    1. [Database Design](#51-database-design)
+    2. [API Design](#52-api-design)
+
+***
 
 ## 1. Pendahuluan
 
@@ -31,7 +42,29 @@ Mengakselerasi industri gim Indonesia.
 
 ### 1.3. Deskripsi Aplikasi
 
-Platform/forum reviu gim-gim Indonesia sesama gamers dan expert.
+Platform/forum reviu gim-gim Indonesia sesama gamers dan kritikus.
+
+#### 1.4. Asumsi dan Batasan
+
+- Tidak ada batasan pada jumlah user.
+- Tidak ada batasan pada jumlah game yang dapat di-review.
+- Tidak ada batasan pada jumlah user yang dapat me-review.
+
+#### 1.5. Referensi
+
+- [Peraturan Presiden No. 19/2024](https://www.presiden.go.id/id/peraturan-presiden/peraturan-presiden-no-19-tahun-2024-tentang-percepatan-pengembangan-industri-game-lokal)
+- [Data Kementerian Perindustrian](https://www.kemenperin.go.id/id/perusahaan-perindustrian/data-perindustrian/data-perindustrian)
+
+#### 1.6. Definisi Istilah
+
+- **User**: Pengguna aplikasi.
+- **End User**: Pengguna aplikasi yang mengonsumsi produk aplikasi.
+- **Game**: Game yang dapat di-review.
+- **Review**: Review dari pengguna ke game.
+- **Kritikus**: Reviewer yang merupakan ahli dalam memberikan review.
+- **Admin**: Pengguna yang dapat mengelola aplikasi.
+
+***
 
 ## 2 Kebutuhan Sistem
 
@@ -47,11 +80,17 @@ Platform/forum reviu gim-gim Indonesia sesama gamers dan expert.
 - Mudah diperbaharui.
 - Mudah dilakukan maintenance.
 
+***
+
 ## 3. Arsitektur Sistem
 
 ![System Architecture Model](./System%20Architecture%20Model.png)
 
+***
+
 ## 4. Frontend Design
+
+***
 
 ## 5. Backend Design
 

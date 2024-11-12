@@ -80,3 +80,5 @@ Platform/forum reviu gim-gim Indonesia sesama gamers beserta kritikus.
 ![Entity Relationship Diagram](./Entity%20Relationship%20Diagram.png)
 
 ### 5.2 API Design
+
+[API Documentation](../openapi.json)

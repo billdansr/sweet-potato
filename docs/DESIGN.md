@@ -16,9 +16,7 @@
     1. [Latar Belakang](#11-latar-belakang)
     2. [Tujuan](#12-tujuan)
     3. [Deskripsi Aplikasi](#13-deskripsi-aplikasi)
-    4. [Asumsi dan Batasan](#14-asumsi-dan-batasan)
-    5. [Referensi](#15-referensi)
-    6. [Definisi Istilah](#16-definisi-istilah)
+    4. [Referensi](#14-referensi)
 2. [Kebutuhan Sistem](#2-kebutuhan-sistem)
     1. [Kebutuhan Fungsional](#21-kebutuhan-fungsional)
     2. [Kebutuhan Non-Fungsional](#22-kebutuhan-non-fungsional)
@@ -44,25 +42,10 @@ Mengakselerasi industri gim Indonesia.
 
 Platform/forum reviu gim-gim Indonesia sesama gamers dan kritikus.
 
-#### 1.4. Asumsi dan Batasan
-
-- Tidak ada batasan pada jumlah user.
-- Tidak ada batasan pada jumlah game yang dapat di-review.
-- Tidak ada batasan pada jumlah user yang dapat me-review.
-
-#### 1.5. Referensi
+### 1.4. Referensi
 
 - [Peraturan Presiden No. 19/2024](https://www.presiden.go.id/id/peraturan-presiden/peraturan-presiden-no-19-tahun-2024-tentang-percepatan-pengembangan-industri-game-lokal)
 - [Data Kementerian Perindustrian](https://www.kemenperin.go.id/id/perusahaan-perindustrian/data-perindustrian/data-perindustrian)
-
-#### 1.6. Definisi Istilah
-
-- **User**: Pengguna aplikasi.
-- **End User**: Pengguna aplikasi yang mengonsumsi produk aplikasi.
-- **Game**: Game yang dapat di-review.
-- **Review**: Review dari pengguna ke game.
-- **Kritikus**: Reviewer yang merupakan ahli dalam memberikan review.
-- **Admin**: Pengguna yang dapat mengelola aplikasi.
 
 ***
 

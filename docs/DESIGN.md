@@ -19,10 +19,10 @@
     1. [Functional Requirements](#21-functional-requirements)
     2. [Non-Functional Requirements](#22-non-functional-requirements)
 3. [System Architecture](#3-system-architecture)
-4. [Frontend Design](#4-frontend-design)
-5. [Backend Design](#5-backend-design)
-    1. [Database Design](#51-database-design)
-    2. [API Design](#52-api-design)
+4. [Backend Design](#4-backend-design)
+    1. [Database Design](#41-database-design)
+    2. [API Design](#42-api-design)
+5. [Frontend Design](#5-frontend-design)
 
 ***
 
@@ -69,16 +69,16 @@ Platform/forum reviu gim-gim Indonesia sesama gamers beserta kritikus.
 
 ***
 
-## 4. Frontend Design
+## 4. Backend Design
 
-***
-
-## 5. Backend Design
-
-### 5.1 Database Design
+### 4.1 Database Design
 
 ![Entity Relationship Diagram](./Entity%20Relationship%20Diagram.png)
 
-### 5.2 API Design
+### 4.2 API Design
 
 [API Documentation](../openapi.json)
+
+***
+
+## 5. Frontend Design

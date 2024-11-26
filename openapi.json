@@ -22,5 +22,10 @@
             }
         }
     },
+    "servers": [
+        {
+            "url": "http://localhost/"
+        }
+    ],
     "tags": []
 }

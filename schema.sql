@@ -34,7 +34,7 @@ CREATE TABLE "users" (
 CREATE TABLE "user_profiles" (
     "user_id" INTEGER,
     "name" TEXT,
-    "avatar_filename" TEXT,
+    "avatar" TEXT,
     "updated_at" INTEGER,
     PRIMARY KEY("user_id"),
     FOREIGN KEY("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE

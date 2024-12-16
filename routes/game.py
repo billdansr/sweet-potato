@@ -1,19 +1,22 @@
 import os
 from apiflask import APIBlueprint, abort
+from routes import auth
 from datetime import datetime, timezone
 from db import query_db
 from flask import url_for, current_app
-from schemas import GameIn, GameOut, GamesOut, EmptySchema, GameQuery
+from schemas import GameIn, GameOut, GamesOut, GamesQuery, EmptySchema, CreatedSchema, AuthorizationHeader
 from werkzeug.utils import secure_filename
 
 game = APIBlueprint('game', __name__, url_prefix='/api/games')
 
 
 @game.post('/')
+@game.auth_required(auth)
 @game.doc(description='Create a new game', responses=[201, 409, 422])
+@game.input(AuthorizationHeader, location='headers')
 @game.input(GameIn, location='files')
+@game.output(CreatedSchema, 201, example=CreatedSchema.example())
 def create_game(files_data):
-    print(files_data)
     title = files_data.get('title')
     description = files_data.get('description')
     release_date = files_data.get('release_date')
@@ -60,10 +63,9 @@ def create_game(files_data):
 
 @game.get('/')
 @game.doc(description='List of games', responses=[200, 404])
-@game.input(GameQuery, location='query')
-@game.output(GamesOut, example=GamesOut.example())
+@game.input(GamesQuery, location='query')
+@game.output(GamesOut, 200, example=GamesOut.example())
 def read_games(query_data):
-    print(query_data)
     offset = query_data.get('offset')
     limit = query_data.get('limit')
 
@@ -90,7 +92,7 @@ def read_games(query_data):
 
 @game.get('/<int:id>')
 @game.doc(description='Single game', responses=[200, 404])
-@game.output(GameOut, example=GameOut.example())
+@game.output(GameOut, 200, example=GameOut.example())
 def read_game(id):
     result = dict(query_db('SELECT "id", "title", "description", "release_date" FROM "games" WHERE "id" = ?;', 
                 (id,), one=True) or abort(404, detail='Game not found'))
@@ -135,9 +137,11 @@ def read_game(id):
 
 
 @game.patch('/<int:id>')
+@game.auth_required(auth)
 @game.doc(description='Update a game', responses=[204, 404, 422])
+@game.input(AuthorizationHeader, location='headers')
 @game.input(GameIn, location='files')
-@game.output(EmptySchema, status_code=204)
+@game.output(EmptySchema, 204)
 def update_game(id, files_data):
     title = files_data.get('title')
     description = files_data.get('description')
@@ -185,8 +189,10 @@ def update_game(id, files_data):
 
 
 @game.delete('/<int:id>')
+@game.auth_required(auth)
 @game.doc(description='Delete a game', responses=[204])
-@game.output(EmptySchema, status_code=204)
+@game.input(AuthorizationHeader, location='headers')
+@game.output(EmptySchema, 204)
 def delete_game(id):
     query_db('DELETE FROM "games" WHERE "id" = ?;', (id,))
     query_db('COMMIT;')

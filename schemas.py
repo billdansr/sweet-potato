@@ -1,11 +1,27 @@
 from apiflask import Schema
-from apiflask.fields import String, Integer, Date, URL, List, Dict, File
+from apiflask.fields import String, Integer, Date, URL, List, Dict, File, DateTime
 from apiflask.schemas import EmptySchema
 from apiflask.validators import FileSize, FileType
 
 
+class Token(Schema):
+    token = String()
+
+    @staticmethod
+    def example():
+        return {
+            "token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiYWRtaW4iOjAsImV4cCI6MTczNDM1MTMzMi45MjYzOTh9.Dh--bIms6bq6UseB11eGUvCeNwfb-ub0vD4Jq5LXlN8"
+        }
+
+
+class AuthorizationHeader(Schema):
+    authorization = String(required=True, metadata={
+        'description': 'Authorization header in the format: Bearer <access_token>'
+    })
+
+
 class UserProfileIn(Schema):
-    name = String()
+    name = String(required=True)
     avatar = File()
 
 
@@ -13,12 +29,29 @@ class UserIn(Schema):
     username = String(required=True)
     password = String(required=True)
 
+    @staticmethod
+    def example():
+        return {
+            'username': 'ohayou',
+            'password': 'ohayou123'
+        }
+
 
 class UserOut(Schema):
     id = Integer(required=True)
     username = String(required=True)
     name = String()
     avatar = URL()
+    created_at = DateTime()
+
+    @staticmethod
+    def example():
+        return {
+            'id': 1,
+            'username': 'ohayou',
+            'name': 'ohayou',
+            'avatar': 'https://example.com/avatar.png'
+        }
 
 
 class GameIn(Schema):
@@ -103,7 +136,7 @@ class GamesOut(Schema):
         }
     
 
-class GameQuery(Schema):
+class GamesQuery(Schema):
     offset = Integer(load_default=0)
     limit = Integer(load_default=20)
     
@@ -125,7 +158,7 @@ class GenreOut(Schema):
     @staticmethod
     def example():
         return {
-            'id': '1',
+            'id': 1,
             'name': 'Action'
         }
 
@@ -259,3 +292,14 @@ class RolesOut(Schema):
             }
         ]
     
+
+class CreatedSchema(Schema):
+    message = String(required=True)
+    id = Integer(required=True)
+
+    @staticmethod
+    def example():
+        return {
+            'message': 'Data created successfully!',
+            'id': 1
+        }

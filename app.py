@@ -1,9 +1,9 @@
 import os
 from apiflask import APIFlask, HTTPTokenAuth
-from db import close_connection
+from db import init_app
 from flask_cors import CORS
-from routes import *
-
+from routes import auth, company, game, genre, platform, role
+from flask import send_from_directory
 
 app = APIFlask(__name__, docs_ui='swagger-ui', title='Sweet Potato API', version='1.0.0')
 auth = HTTPTokenAuth(scheme='Bearer')
@@ -13,14 +13,17 @@ app.config['SPEC_FORMAT'] = 'json'
 app.config['LOCAL_SPEC_PATH'] = os.path.join(app.root_path, 'openapi.json')
 app.config['SYNC_LOCAL_SPEC'] = True
 app.config['LOCAL_SPEC_JSON_INDENT'] = 4
-app.config['UPLOAD_DIR'] = os.path.join(app.root_path, 'upload')
+app.config['DATABASE'] = os.path.join(app.instance_path, 'database.db')
+app.config['UPLOAD_DIR'] = os.path.join(app.instance_path, 'upload')
 
-app.teardown_appcontext(close_connection)
+init_app(app)
 
 CORS(app)
 
-# Create upload directory if it doesn't exist
+# Create directory if it doesn't exist
+os.makedirs(app.instance_path, exist_ok=True)
 os.makedirs(app.config['UPLOAD_DIR'], exist_ok=True)
+
 
 def create_token(user_id):
     # Implement your token creation logic here
@@ -28,9 +31,10 @@ def create_token(user_id):
     # Example:
     # token = generate_token(user_id)
     # return token
-    header = {'alg': 'HS256'}
-    payload = {'id': user_id}
+    # header = {'alg': 'HS256'}
+    # payload = {'id': user_id}
     pass
+
 
 @auth.verify_token
 def verify_token(token):
@@ -40,9 +44,17 @@ def verify_token(token):
     # user_id = verify_
     pass
 
+
 # Register routes
-init_game_routes(app, auth)
-init_genre_routes(app)
-init_platform_routes(app)
-init_company_routes(app)
-init_upload_routes(app)
+@app.get('/upload/<path:filename>')
+def read_upload(filename):
+    return send_from_directory(app.config['UPLOAD_DIR'], filename)
+
+
+# Register blueprints
+# app.register_blueprint(auth)
+app.register_blueprint(company)
+app.register_blueprint(game)
+app.register_blueprint(genre)
+app.register_blueprint(platform)
+app.register_blueprint(role)

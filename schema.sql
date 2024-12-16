@@ -1,3 +1,27 @@
+DROP TABLE IF EXISTS "users";
+DROP TABLE IF EXISTS "user_profiles";
+DROP TABLE IF EXISTS "games";
+DROP TABLE IF EXISTS "media";
+DROP TABLE IF EXISTS "ratings";
+DROP TABLE IF EXISTS "platforms";
+DROP TABLE IF EXISTS "game_platforms";
+DROP TABLE IF EXISTS "genres";
+DROP TABLE IF EXISTS "game_genres";
+DROP TABLE IF EXISTS "companies";
+DROP TABLE IF EXISTS "headquarters";
+DROP TABLE IF EXISTS "game_companies";
+DROP TABLE IF EXISTS "roles";
+DROP TABLE IF EXISTS "company_roles";
+DROP VIEW IF EXISTS "view_upcoming_games";
+DROP VIEW IF EXISTS "view_recent_games";
+DROP VIEW IF EXISTS "view_popular_games";
+DROP VIEW IF EXISTS "view_top_rated_games";
+DROP VIEW IF EXISTS "view_game_genres";
+DROP VIEW IF EXISTS "view_game_platforms";
+DROP VIEW IF EXISTS "view_game_companies";
+DROP TRIGGER IF EXISTS "trigger_update_user_profile";
+DROP TRIGGER IF EXISTS "trigger_update_rating";
+
 CREATE TABLE "users" (
     "id" INTEGER,
     "username" TEXT NOT NULL UNIQUE,
@@ -109,16 +133,16 @@ CREATE TABLE "company_roles" (
     FOREIGN KEY("role_id") REFERENCES "roles"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE VIEW "upcoming_games" AS
+CREATE VIEW "view_upcoming_games" AS
 SELECT * FROM "games"
 WHERE "release_date" > (unixepoch('now'));
 
-CREATE VIEW "recent_games" AS
+CREATE VIEW "view_recent_games" AS
 SELECT * FROM "games"
 WHERE "release_date" <= (unixepoch('now'))
 ORDER BY "release_date" DESC;
 
-CREATE VIEW "popular_games" AS
+CREATE VIEW "view_popular_games" AS
 SELECT "games"."id",
     "games"."title",
     "games"."description",
@@ -133,7 +157,7 @@ GROUP BY "games"."id",
     "games"."release_date"
 ORDER BY "rating_count" DESC;
 
-CREATE VIEW "top_rated_games" AS
+CREATE VIEW "view_top_rated_games" AS
 SELECT "games"."id",
     "games"."title",
     "games"."description",
@@ -149,7 +173,40 @@ GROUP BY "games"."id",
     "games"."release_date"
 ORDER BY "average_score" DESC;
 
-CREATE TRIGGER "update_user_profile"
+CREATE VIEW "view_game_genres" AS
+SELECT "games"."id" AS "game_id",
+    "games"."title",
+    "games"."description",
+    "games"."release_date",
+    "genres"."id" AS "genre_id",
+    "genres"."name" AS "genre"
+FROM "games"
+INNER JOIN "game_genres" ON "game_genres"."game_id" = "games"."id"
+INNER JOIN "genres" ON "genres"."id" = "game_genres"."genre_id";
+
+CREATE VIEW "view_game_platforms" AS
+SELECT "games"."id" AS "game_id",
+    "games"."title",
+    "games"."description",
+    "games"."release_date",
+    "platforms"."id" AS "platform_id",
+    "platforms"."name" AS "platform"
+FROM "games"
+INNER JOIN "game_platforms" ON "game_platforms"."game_id" = "games"."id"
+INNER JOIN "platforms" ON "platforms"."id" = "game_platforms"."platform_id";
+
+CREATE VIEW "view_game_companies" AS
+SELECT "games"."id" AS "game_id",
+    "games"."title",
+    "games"."description",
+    "games"."release_date",
+    "companies"."id" AS "company_id",
+    "companies"."name" AS "company"
+FROM "games"
+INNER JOIN "game_companies" ON "game_companies"."game_id" = "games"."id"
+INNER JOIN "companies" ON "companies"."id" = "game_companies"."company_id";
+
+CREATE TRIGGER "trigger_update_user_profile"
 AFTER UPDATE
 ON "user_profiles"
 FOR EACH ROW
@@ -159,7 +216,7 @@ BEGIN
     WHERE "user_id" = NEW."user_id";
 END;
 
-CREATE TRIGGER "update_rating"
+CREATE TRIGGER "trigger_update_rating"
 AFTER UPDATE
 ON "ratings"
 FOR EACH ROW

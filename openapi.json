@@ -18,8 +18,24 @@
             },
             "CompanyIn": {
                 "properties": {
+                    "founding_date": {
+                        "format": "date",
+                        "type": "string"
+                    },
+                    "headquarters": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
                     "name": {
                         "type": "string"
+                    },
+                    "roles": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
                     }
                 },
                 "required": [
@@ -29,6 +45,10 @@
             },
             "CompanyOut": {
                 "properties": {
+                    "founding_date": {
+                        "format": "date",
+                        "type": "string"
+                    },
                     "id": {
                         "type": "integer"
                     },
@@ -62,7 +82,8 @@
                     "media": {
                         "items": {
                             "format": "binary",
-                            "type": "string"
+                            "type": "string",
+                            "x-maximum": "5 MB"
                         },
                         "type": "array"
                     },
@@ -248,6 +269,47 @@
                 ],
                 "type": "object"
             },
+            "RoleIn": {
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name"
+                ],
+                "type": "object"
+            },
+            "RoleOut": {
+                "properties": {
+                    "id": {
+                        "type": "integer"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "type": "object"
+            },
+            "RolesOut": {
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "format": "url",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name"
+                ],
+                "type": "object"
+            },
             "ValidationError": {
                 "properties": {
                     "detail": {
@@ -280,7 +342,7 @@
     },
     "openapi": "3.0.3",
     "paths": {
-        "/api/companies": {
+        "/api/companies/": {
             "get": {
                 "description": "Retrieve list companies",
                 "parameters": [],
@@ -295,7 +357,10 @@
                                     }
                                 ],
                                 "schema": {
-                                    "$ref": "#/components/schemas/CompaniesOut"
+                                    "items": {
+                                        "$ref": "#/components/schemas/CompaniesOut"
+                                    },
+                                    "type": "array"
                                 }
                             }
                         },
@@ -312,7 +377,10 @@
                         "description": "Not Found"
                     }
                 },
-                "summary": "Read Companies"
+                "summary": "Read Companies",
+                "tags": [
+                    "Company"
+                ]
             },
             "post": {
                 "description": "Create a company",
@@ -321,7 +389,15 @@
                     "content": {
                         "application/json": {
                             "example": {
-                                "name": "Nintendo"
+                                "founding_date": "1889-09-23",
+                                "headquarters": [
+                                    "Kyoto, Japan"
+                                ],
+                                "name": "Nintendo",
+                                "roles": [
+                                    "Developer",
+                                    "Publisher"
+                                ]
                             },
                             "schema": {
                                 "$ref": "#/components/schemas/CompanyIn"
@@ -359,11 +435,15 @@
                         "description": "Validation error"
                     }
                 },
-                "summary": "Create Company"
+                "summary": "Create Company",
+                "tags": [
+                    "Company"
+                ]
             }
         },
         "/api/companies/{id}": {
             "delete": {
+                "description": "Delete a company",
                 "parameters": [
                     {
                         "in": "path",
@@ -375,12 +455,7 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        },
+                    "204": {
                         "description": "Successful response"
                     },
                     "404": {
@@ -394,10 +469,13 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Delete Company"
+                "summary": "Delete Company",
+                "tags": [
+                    "Company"
+                ]
             },
             "get": {
-                "description": "Retrieve a company",
+                "description": "Single company",
                 "parameters": [
                     {
                         "in": "path",
@@ -413,6 +491,7 @@
                         "content": {
                             "application/json": {
                                 "example": {
+                                    "founding_date": "1889-09-23",
                                     "id": 1,
                                     "name": "Nintendo"
                                 },
@@ -434,7 +513,10 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Read Company"
+                "summary": "Read Company",
+                "tags": [
+                    "Company"
+                ]
             },
             "patch": {
                 "description": "Update a company",
@@ -452,7 +534,15 @@
                     "content": {
                         "application/json": {
                             "example": {
-                                "name": "Nintendo"
+                                "founding_date": "1889-09-23",
+                                "headquarters": [
+                                    "Kyoto, Japan"
+                                ],
+                                "name": "Nintendo",
+                                "roles": [
+                                    "Developer",
+                                    "Publisher"
+                                ]
                             },
                             "schema": {
                                 "$ref": "#/components/schemas/CompanyIn"
@@ -462,7 +552,7 @@
                 },
                 "responses": {
                     "204": {
-                        "description": "No Content"
+                        "description": "Successful response"
                     },
                     "404": {
                         "content": {
@@ -485,12 +575,15 @@
                         "description": "Validation error"
                     }
                 },
-                "summary": "Update Company"
+                "summary": "Update Company",
+                "tags": [
+                    "Company"
+                ]
             }
         },
-        "/api/games": {
+        "/api/games/": {
             "get": {
-                "description": "List games",
+                "description": "List of games",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -527,9 +620,22 @@
                             }
                         },
                         "description": "Not Found"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
                     }
                 },
-                "summary": "Read Games"
+                "summary": "Read Games",
+                "tags": [
+                    "Game"
+                ]
             },
             "post": {
                 "description": "Create a new game",
@@ -537,27 +643,6 @@
                 "requestBody": {
                     "content": {
                         "multipart/form-data": {
-                            "example": {
-                                "companies": [
-                                    "Nintendo"
-                                ],
-                                "description": "The Legend of Zelda: Breath of the Wild is an action-adventure game developed and published by Nintendo for the Nintendo Switch and Wii U.",
-                                "genres": [
-                                    "Action",
-                                    "Adventure"
-                                ],
-                                "media": [
-                                    "https://example.com/media/1.jpg",
-                                    "https://example.com/media/2.jpg",
-                                    "https://example.com/media/3.jpg"
-                                ],
-                                "platforms": [
-                                    "Nintendo Switch",
-                                    "Wii U"
-                                ],
-                                "release_date": "2017-03-03",
-                                "title": "The Legend of Zelda: Breath of the Wild"
-                            },
                             "schema": {
                                 "$ref": "#/components/schemas/GameIn"
                             }
@@ -594,7 +679,10 @@
                         "description": "Validation error"
                     }
                 },
-                "summary": "Create Game"
+                "summary": "Create Game",
+                "tags": [
+                    "Game"
+                ]
             }
         },
         "/api/games/{id}": {
@@ -612,7 +700,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content"
+                        "description": "Successful response"
                     },
                     "404": {
                         "content": {
@@ -625,7 +713,10 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Delete Game"
+                "summary": "Delete Game",
+                "tags": [
+                    "Game"
+                ]
             },
             "get": {
                 "description": "Single game",
@@ -694,7 +785,10 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Read Game"
+                "summary": "Read Game",
+                "tags": [
+                    "Game"
+                ]
             },
             "patch": {
                 "description": "Update a game",
@@ -719,7 +813,7 @@
                 },
                 "responses": {
                     "204": {
-                        "description": "No Content"
+                        "description": "Successful response"
                     },
                     "404": {
                         "content": {
@@ -742,7 +836,10 @@
                         "description": "Validation error"
                     }
                 },
-                "summary": "Update Game"
+                "summary": "Update Game",
+                "tags": [
+                    "Game"
+                ]
             }
         },
         "/api/games/{id}/media": {
@@ -778,10 +875,13 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Read Game Media"
+                "summary": "Read Game Media",
+                "tags": [
+                    "Game"
+                ]
             }
         },
-        "/api/genres": {
+        "/api/genres/": {
             "get": {
                 "description": "Retrieve list genres",
                 "parameters": [],
@@ -796,7 +896,10 @@
                                     }
                                 ],
                                 "schema": {
-                                    "$ref": "#/components/schemas/GenresOut"
+                                    "items": {
+                                        "$ref": "#/components/schemas/GenresOut"
+                                    },
+                                    "type": "array"
                                 }
                             }
                         },
@@ -813,7 +916,10 @@
                         "description": "Not Found"
                     }
                 },
-                "summary": "Read Genres"
+                "summary": "Read Genres",
+                "tags": [
+                    "Genre"
+                ]
             },
             "post": {
                 "description": "Create a genre",
@@ -860,7 +966,10 @@
                         "description": "Validation error"
                     }
                 },
-                "summary": "Create Genre"
+                "summary": "Create Genre",
+                "tags": [
+                    "Genre"
+                ]
             }
         },
         "/api/genres/{id}": {
@@ -878,7 +987,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content"
+                        "description": "Successful response"
                     },
                     "404": {
                         "content": {
@@ -891,10 +1000,13 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Delete Genre"
+                "summary": "Delete Genre",
+                "tags": [
+                    "Genre"
+                ]
             },
             "get": {
-                "description": "Retrieve a genre",
+                "description": "Single genre",
                 "parameters": [
                     {
                         "in": "path",
@@ -931,7 +1043,10 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Read Genre"
+                "summary": "Read Genre",
+                "tags": [
+                    "Genre"
+                ]
             },
             "patch": {
                 "description": "Update a genre",
@@ -959,7 +1074,7 @@
                 },
                 "responses": {
                     "204": {
-                        "description": "No Content"
+                        "description": "Successful response"
                     },
                     "404": {
                         "content": {
@@ -982,43 +1097,13 @@
                         "description": "Validation error"
                     }
                 },
-                "summary": "Update Genre"
+                "summary": "Update Genre",
+                "tags": [
+                    "Genre"
+                ]
             }
         },
         "/api/platforms": {
-            "get": {
-                "description": "Retrieve list platforms",
-                "parameters": [],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "example": [
-                                    {
-                                        "name": "Nintendo Switch",
-                                        "url": "https://example.com/platforms/1"
-                                    }
-                                ],
-                                "schema": {
-                                    "$ref": "#/components/schemas/PlatformsOut"
-                                }
-                            }
-                        },
-                        "description": "Successful response"
-                    },
-                    "404": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPError"
-                                }
-                            }
-                        },
-                        "description": "Not Found"
-                    }
-                },
-                "summary": "Read Platforms"
-            },
             "post": {
                 "description": "Create a platform",
                 "parameters": [],
@@ -1064,7 +1149,51 @@
                         "description": "Validation error"
                     }
                 },
-                "summary": "Create Platform"
+                "summary": "Create Platform",
+                "tags": [
+                    "Platform"
+                ]
+            }
+        },
+        "/api/platforms/": {
+            "get": {
+                "description": "Retrieve list platforms",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "example": [
+                                    {
+                                        "name": "Nintendo Switch",
+                                        "url": "https://example.com/platforms/1"
+                                    }
+                                ],
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/PlatformsOut"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "Successful response"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    }
+                },
+                "summary": "Read Platforms",
+                "tags": [
+                    "Platform"
+                ]
             }
         },
         "/api/platforms/{id}": {
@@ -1082,7 +1211,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "No Content"
+                        "description": "Successful response"
                     },
                     "404": {
                         "content": {
@@ -1095,10 +1224,13 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Delete Platform"
+                "summary": "Delete Platform",
+                "tags": [
+                    "Platform"
+                ]
             },
             "get": {
-                "description": "Retrieve a platform",
+                "description": "Single platform",
                 "parameters": [
                     {
                         "in": "path",
@@ -1135,7 +1267,10 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Read Platform"
+                "summary": "Read Platform",
+                "tags": [
+                    "Platform"
+                ]
             },
             "patch": {
                 "description": "Update a platform",
@@ -1163,7 +1298,7 @@
                 },
                 "responses": {
                     "204": {
-                        "description": "No Content"
+                        "description": "Successful response"
                     },
                     "404": {
                         "content": {
@@ -1186,41 +1321,106 @@
                         "description": "Validation error"
                     }
                 },
-                "summary": "Update Platform"
+                "summary": "Update Platform",
+                "tags": [
+                    "Platform"
+                ]
             }
         },
-        "/api/roles": {
+        "/api/roles/api/roles": {
             "get": {
+                "description": "Retrieve list roles",
                 "parameters": [],
                 "responses": {
                     "200": {
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "example": [
+                                    {
+                                        "name": "Engine Developer",
+                                        "url": "https://example.com/roles"
+                                    }
+                                ],
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/RolesOut"
+                                    },
+                                    "type": "array"
+                                }
                             }
                         },
                         "description": "Successful response"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
                     }
                 },
-                "summary": "Read Roles"
+                "summary": "Read Roles",
+                "tags": [
+                    "Role"
+                ]
             },
             "post": {
+                "description": "Create a role",
                 "parameters": [],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "name": "Engine Developer"
+                            },
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleIn"
+                            }
+                        }
+                    }
+                },
                 "responses": {
-                    "200": {
+                    "201": {
                         "content": {
                             "application/json": {
                                 "schema": {}
                             }
                         },
-                        "description": "Successful response"
+                        "description": "Created"
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Conflict"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
                     }
                 },
-                "summary": "Create Role"
+                "summary": "Create Role",
+                "tags": [
+                    "Role"
+                ]
             }
         },
-        "/api/roles/{id}": {
+        "/api/roles/api/roles/{id}": {
             "delete": {
+                "description": "Delete a role",
                 "parameters": [
                     {
                         "in": "path",
@@ -1232,12 +1432,7 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {}
-                            }
-                        },
+                    "204": {
                         "description": "Successful response"
                     },
                     "404": {
@@ -1251,9 +1446,13 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Delete Role"
+                "summary": "Delete Role",
+                "tags": [
+                    "Role"
+                ]
             },
             "get": {
+                "description": "Single role",
                 "parameters": [
                     {
                         "in": "path",
@@ -1268,7 +1467,13 @@
                     "200": {
                         "content": {
                             "application/json": {
-                                "schema": {}
+                                "example": {
+                                    "id": 1,
+                                    "name": "Engine Developer"
+                                },
+                                "schema": {
+                                    "$ref": "#/components/schemas/RoleOut"
+                                }
                             }
                         },
                         "description": "Successful response"
@@ -1284,9 +1489,13 @@
                         "description": "Not found"
                     }
                 },
-                "summary": "Read Role"
+                "summary": "Read Role",
+                "tags": [
+                    "Role"
+                ]
             },
             "patch": {
+                "description": "Update a role",
                 "parameters": [
                     {
                         "in": "path",
@@ -1297,13 +1506,20 @@
                         }
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {}
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "name": "Engine Developer"
+                            },
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleIn"
                             }
-                        },
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
                         "description": "Successful response"
                     },
                     "404": {
@@ -1315,9 +1531,22 @@
                             }
                         },
                         "description": "Not found"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
                     }
                 },
-                "summary": "Update Role"
+                "summary": "Update Role",
+                "tags": [
+                    "Role"
+                ]
             }
         },
         "/upload/{filename}": {
@@ -1361,5 +1590,21 @@
             "url": "http://192.168.1.7:5001/"
         }
     ],
-    "tags": []
+    "tags": [
+        {
+            "name": "Company"
+        },
+        {
+            "name": "Game"
+        },
+        {
+            "name": "Genre"
+        },
+        {
+            "name": "Platform"
+        },
+        {
+            "name": "Role"
+        }
+    ]
 }

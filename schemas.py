@@ -1,20 +1,25 @@
 from apiflask import Schema
 from apiflask.fields import String, Integer, Date, URL, List, Dict, File
+from apiflask.schemas import EmptySchema
+from apiflask.validators import FileSize, FileType
 
 
 class UserProfileIn(Schema):
     name = String()
     avatar = File()
 
+
 class UserIn(Schema):
     username = String(required=True)
     password = String(required=True)
+
 
 class UserOut(Schema):
     id = Integer(required=True)
     username = String(required=True)
     name = String()
     avatar = URL()
+
 
 class GameIn(Schema):
     title = String(required=True)
@@ -23,7 +28,8 @@ class GameIn(Schema):
     genres = List(String)
     platforms = List(String)
     companies = List(String)
-    media = List(File)
+    media = List(File(validate=[FileType(['.png', '.jpg', '.jpeg', '.gif', '.mp4']), FileSize(max='100 MB')]))
+
 
 class GameOut(Schema):
     id = Integer(required=True)
@@ -71,6 +77,7 @@ class GameOut(Schema):
             ]
         }
 
+
 class GamesOut(Schema):
     count = Integer(required=True)
     next = String()
@@ -95,6 +102,12 @@ class GamesOut(Schema):
             ]
         }
     
+
+class GameQuery(Schema):
+    offset = Integer(load_default=0)
+    limit = Integer(load_default=20)
+    
+
 class GenreIn(Schema):
     name = String(required=True)
 
@@ -103,6 +116,7 @@ class GenreIn(Schema):
         return {
             'name': 'Action'
         }
+
 
 class GenreOut(Schema):
     id = Integer(required=True)
@@ -114,6 +128,7 @@ class GenreOut(Schema):
             'id': '1',
             'name': 'Action'
         }
+
 
 class GenresOut(Schema):
     name = String(required=True)
@@ -128,6 +143,7 @@ class GenresOut(Schema):
             }
         ]
 
+
 class PlatformIn(Schema):
     name = String(required=True)
 
@@ -136,6 +152,7 @@ class PlatformIn(Schema):
         return {
             'name': 'Nintendo Switch'
         }
+
 
 class PlatformOut(Schema):
     id = Integer(required=True)
@@ -147,6 +164,7 @@ class PlatformOut(Schema):
             'id': 1,
             'name': 'Nintendo Switch'
         }
+
 
 class PlatformsOut(Schema):
     name = String(required=True)
@@ -160,6 +178,7 @@ class PlatformsOut(Schema):
                 'url': 'https://example.com/platforms/1'
             }
         ]
+
 
 class CompanyIn(Schema):
     name = String(required=True)
@@ -176,6 +195,7 @@ class CompanyIn(Schema):
             'roles': ['Developer', 'Publisher']
         }
     
+
 class CompanyOut(Schema):
     id = Integer(required=True)
     name = String(required=True)
@@ -189,6 +209,7 @@ class CompanyOut(Schema):
             'founding_date': '1889-09-23'
         }
     
+
 class CompaniesOut(Schema):
     name = String(required=True)
     url = URL()
@@ -202,6 +223,7 @@ class CompaniesOut(Schema):
             }
         ]
     
+
 class RoleIn(Schema):
     name = String(required=True)
 
@@ -210,7 +232,8 @@ class RoleIn(Schema):
         return {
             'name': 'Engine Developer'
         }
-    
+
+
 class RoleOut(Schema):
     id = Integer(required=True)
     name = String(required=True)
@@ -222,6 +245,7 @@ class RoleOut(Schema):
             'name': 'Engine Developer'
         }
     
+
 class RolesOut(Schema):
     name = String(required=True)
     url = URL()
@@ -234,3 +258,4 @@ class RolesOut(Schema):
                 'url': 'https://example.com/roles'
             }
         ]
+    

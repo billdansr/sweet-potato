@@ -1,3 +1,6 @@
+INSERT INTO "users" ("username", "password", "is_admin")
+VALUES ('admin', 'admin', 1);
+
 INSERT INTO "games" ("title", "description", "release_date")
 VALUES ('Agni: Village of Calamity', 'Agni, a determined investigator from a covert Indonesian police unit who defied orders and ventures into a remote village despite ominous warnings. What begins as an unauthorized investigation quickly plunges Agni into a horrifying reality', UNIXEPOCH('0001-01-01')),
     ('A Space for the Unbound', 'A magical adventure about two high school sweethearts set at the end of their school days - and the end of the world. Explore a crumbling town and help friends face their inner demons, which could be the key to stopping reality itself disintegrating. And don’t forget to pet the cats.', UNIXEPOCH('2023-01-19')),

@@ -20,6 +20,7 @@
                 "properties": {
                     "founding_date": {
                         "format": "date",
+                        "nullable": true,
                         "type": "string"
                     },
                     "headquarters": {
@@ -100,6 +101,7 @@
                             "type": "string",
                             "x-maximum": "100 MB"
                         },
+                        "nullable": true,
                         "type": "array"
                     },
                     "platforms": {
@@ -110,6 +112,7 @@
                     },
                     "release_date": {
                         "format": "date",
+                        "nullable": true,
                         "type": "string"
                     },
                     "title": {
@@ -155,6 +158,7 @@
                     },
                     "release_date": {
                         "format": "date",
+                        "nullable": true,
                         "type": "string"
                     },
                     "title": {
@@ -173,9 +177,11 @@
                         "type": "integer"
                     },
                     "next": {
+                        "nullable": true,
                         "type": "string"
                     },
                     "previous": {
+                        "nullable": true,
                         "type": "string"
                     },
                     "results": {
@@ -284,6 +290,66 @@
                 ],
                 "type": "object"
             },
+            "RatingIn": {
+                "properties": {
+                    "game_id": {
+                        "type": "integer"
+                    },
+                    "review": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "score": {
+                        "maximum": 10,
+                        "minimum": 0,
+                        "type": "integer"
+                    }
+                },
+                "required": [
+                    "game_id",
+                    "score"
+                ],
+                "type": "object"
+            },
+            "RatingOut": {
+                "properties": {
+                    "avatar": {
+                        "format": "url",
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
+                    "game": {
+                        "type": "string"
+                    },
+                    "review": {
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "score": {
+                        "maximum": 10,
+                        "minimum": 0,
+                        "type": "integer"
+                    },
+                    "updated_at": {
+                        "format": "date-time",
+                        "nullable": true,
+                        "type": "string"
+                    },
+                    "user": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "game",
+                    "score",
+                    "user"
+                ],
+                "type": "object"
+            },
             "RoleIn": {
                 "properties": {
                     "name": {
@@ -333,6 +399,17 @@
                 },
                 "type": "object"
             },
+            "Updated": {
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "message"
+                ],
+                "type": "object"
+            },
             "UserIn": {
                 "properties": {
                     "password": {
@@ -354,6 +431,10 @@
                         "format": "url",
                         "type": "string"
                     },
+                    "created_at": {
+                        "format": "date-time",
+                        "type": "string"
+                    },
                     "id": {
                         "type": "integer"
                     },
@@ -367,6 +448,23 @@
                 "required": [
                     "id",
                     "username"
+                ],
+                "type": "object"
+            },
+            "UserProfileIn": {
+                "properties": {
+                    "avatar": {
+                        "format": "binary",
+                        "nullable": true,
+                        "type": "string",
+                        "x-maximum": "5 MB"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "name"
                 ],
                 "type": "object"
             },
@@ -450,7 +548,17 @@
             },
             "post": {
                 "description": "Create a company",
-                "parameters": [],
+                "parameters": [
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -486,6 +594,16 @@
                         },
                         "description": "Successful response"
                     },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
                     "409": {
                         "content": {
                             "application/json": {
@@ -507,6 +625,13 @@
                         "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Create Company",
                 "tags": [
                     "Company"
@@ -524,11 +649,30 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
                     "204": {
                         "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
                     },
                     "404": {
                         "content": {
@@ -539,8 +683,25 @@
                             }
                         },
                         "description": "Not found"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Delete Company",
                 "tags": [
                     "Company"
@@ -600,6 +761,15 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "requestBody": {
@@ -626,6 +796,16 @@
                     "204": {
                         "description": "Successful response"
                     },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
                     "404": {
                         "content": {
                             "application/json": {
@@ -647,6 +827,13 @@
                         "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Update Company",
                 "tags": [
                     "Company"
@@ -657,15 +844,6 @@
             "get": {
                 "description": "List of games",
                 "parameters": [
-                    {
-                        "description": "Authorization header in the format: Bearer <access_token>",
-                        "in": "header",
-                        "name": "authorization",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
                     {
                         "in": "query",
                         "name": "offset",
@@ -711,16 +889,6 @@
                         },
                         "description": "Successful response"
                     },
-                    "401": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPError"
-                                }
-                            }
-                        },
-                        "description": "Authentication error"
-                    },
                     "404": {
                         "content": {
                             "application/json": {
@@ -742,11 +910,6 @@
                         "description": "Validation error"
                     }
                 },
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "summary": "Read Games",
                 "tags": [
                     "Game"
@@ -754,7 +917,17 @@
             },
             "post": {
                 "description": "Create a new game",
-                "parameters": [],
+                "parameters": [
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "multipart/form-data": {
@@ -779,6 +952,16 @@
                         },
                         "description": "Successful response"
                     },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
                     "409": {
                         "content": {
                             "application/json": {
@@ -800,6 +983,13 @@
                         "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Create Game",
                 "tags": [
                     "Game"
@@ -817,11 +1007,30 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
                     "204": {
                         "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
                     },
                     "404": {
                         "content": {
@@ -832,8 +1041,25 @@
                             }
                         },
                         "description": "Not found"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Delete Game",
                 "tags": [
                     "Game"
@@ -921,6 +1147,15 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "requestBody": {
@@ -935,6 +1170,16 @@
                 "responses": {
                     "204": {
                         "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
                     },
                     "404": {
                         "content": {
@@ -957,6 +1202,13 @@
                         "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Update Game",
                 "tags": [
                     "Game"
@@ -1044,7 +1296,17 @@
             },
             "post": {
                 "description": "Create a genre",
-                "parameters": [],
+                "parameters": [
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1072,6 +1334,16 @@
                         },
                         "description": "Successful response"
                     },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
                     "409": {
                         "content": {
                             "application/json": {
@@ -1093,6 +1365,13 @@
                         "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Create Genre",
                 "tags": [
                     "Genre"
@@ -1110,11 +1389,30 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
                     "204": {
                         "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
                     },
                     "404": {
                         "content": {
@@ -1125,8 +1423,25 @@
                             }
                         },
                         "description": "Not found"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Delete Genre",
                 "tags": [
                     "Genre"
@@ -1185,6 +1500,15 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "requestBody": {
@@ -1202,6 +1526,16 @@
                 "responses": {
                     "204": {
                         "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
                     },
                     "404": {
                         "content": {
@@ -1224,67 +1558,16 @@
                         "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Update Genre",
                 "tags": [
                     "Genre"
-                ]
-            }
-        },
-        "/api/platforms": {
-            "post": {
-                "description": "Create a platform",
-                "parameters": [],
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "example": {
-                                "name": "Nintendo Switch"
-                            },
-                            "schema": {
-                                "$ref": "#/components/schemas/PlatformIn"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "content": {
-                            "application/json": {
-                                "example": {
-                                    "id": 1,
-                                    "message": "Data created successfully!"
-                                },
-                                "schema": {
-                                    "$ref": "#/components/schemas/Created"
-                                }
-                            }
-                        },
-                        "description": "Successful response"
-                    },
-                    "409": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPError"
-                                }
-                            }
-                        },
-                        "description": "Conflict"
-                    },
-                    "422": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ValidationError"
-                                }
-                            }
-                        },
-                        "description": "Validation error"
-                    }
-                },
-                "summary": "Create Platform",
-                "tags": [
-                    "Platform"
                 ]
             }
         },
@@ -1327,6 +1610,89 @@
                 "tags": [
                     "Platform"
                 ]
+            },
+            "post": {
+                "description": "Create a platform",
+                "parameters": [
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "name": "Nintendo Switch"
+                            },
+                            "schema": {
+                                "$ref": "#/components/schemas/PlatformIn"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": 1,
+                                    "message": "Data created successfully!"
+                                },
+                                "schema": {
+                                    "$ref": "#/components/schemas/Created"
+                                }
+                            }
+                        },
+                        "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Conflict"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
+                "summary": "Create Platform",
+                "tags": [
+                    "Platform"
+                ]
             }
         },
         "/api/platforms/{id}": {
@@ -1340,11 +1706,30 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
                     "204": {
                         "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
                     },
                     "404": {
                         "content": {
@@ -1355,8 +1740,25 @@
                             }
                         },
                         "description": "Not found"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Delete Platform",
                 "tags": [
                     "Platform"
@@ -1415,6 +1817,15 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "requestBody": {
@@ -1432,6 +1843,16 @@
                 "responses": {
                     "204": {
                         "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
                     },
                     "404": {
                         "content": {
@@ -1454,9 +1875,311 @@
                         "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Update Platform",
                 "tags": [
                     "Platform"
+                ]
+            }
+        },
+        "/api/ratings/": {
+            "get": {
+                "description": "List ratings",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "avatar": "https://example.com/avatar.png",
+                                    "created_at": "2021-01-01T00:00:00Z",
+                                    "game": "The Legend of Zelda: Breath of the Wild",
+                                    "review": "This game is amazing!",
+                                    "score": 5,
+                                    "updated_at": "2021-01-01T00:00:00Z",
+                                    "user": "ohayou"
+                                },
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/RatingOut"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "Successful response"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    }
+                },
+                "summary": "Get Ratings",
+                "tags": [
+                    "Rating"
+                ]
+            },
+            "post": {
+                "description": "Create rating",
+                "parameters": [
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "game_id": 1,
+                                "review": "This game is amazing!",
+                                "score": 10
+                            },
+                            "schema": {
+                                "$ref": "#/components/schemas/RatingIn"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "id": 1,
+                                    "message": "Data created successfully!"
+                                },
+                                "schema": {
+                                    "$ref": "#/components/schemas/Created"
+                                }
+                            }
+                        },
+                        "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "409": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Conflict"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Create Rating",
+                "tags": [
+                    "Rating"
+                ]
+            }
+        },
+        "/api/ratings/{id}": {
+            "delete": {
+                "description": "Delete rating",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Delete Rating",
+                "tags": [
+                    "Rating"
+                ]
+            },
+            "patch": {
+                "description": "Update rating",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "example": {
+                                "game_id": 1,
+                                "review": "This game is amazing!",
+                                "score": 10
+                            },
+                            "schema": {
+                                "$ref": "#/components/schemas/RatingIn"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "message": "Data updated successfully!"
+                                },
+                                "schema": {
+                                    "$ref": "#/components/schemas/Updated"
+                                }
+                            }
+                        },
+                        "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Not found"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Update Rating",
+                "tags": [
+                    "Rating"
                 ]
             }
         },
@@ -1502,7 +2225,17 @@
             },
             "post": {
                 "description": "Create a role",
-                "parameters": [],
+                "parameters": [
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -1530,6 +2263,16 @@
                         },
                         "description": "Successful response"
                     },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
                     "409": {
                         "content": {
                             "application/json": {
@@ -1551,6 +2294,13 @@
                         "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Create Role",
                 "tags": [
                     "Role"
@@ -1568,11 +2318,30 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
                     "204": {
                         "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
                     },
                     "404": {
                         "content": {
@@ -1583,8 +2352,25 @@
                             }
                         },
                         "description": "Not found"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Delete Role",
                 "tags": [
                     "Role"
@@ -1643,6 +2429,15 @@
                         "schema": {
                             "type": "integer"
                         }
+                    },
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "requestBody": {
@@ -1660,6 +2455,16 @@
                 "responses": {
                     "204": {
                         "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
                     },
                     "404": {
                         "content": {
@@ -1682,9 +2487,75 @@
                         "description": "Validation error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": [
+                            "admin"
+                        ]
+                    }
+                ],
                 "summary": "Update Role",
                 "tags": [
                     "Role"
+                ]
+            }
+        },
+        "/api/users/": {
+            "patch": {
+                "description": "Update user profile",
+                "parameters": [
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UserProfileIn"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "204": {
+                        "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Update User",
+                "tags": [
+                    "User"
                 ]
             }
         },
@@ -1908,6 +2779,9 @@
         },
         {
             "name": "Platform"
+        },
+        {
+            "name": "Rating"
         },
         {
             "name": "Role"

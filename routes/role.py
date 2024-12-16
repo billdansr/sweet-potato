@@ -4,11 +4,11 @@ from flask import url_for
 from routes import auth
 from schemas import RoleIn, RoleOut, RolesOut, EmptySchema, CreatedSchema, AuthorizationHeader
 
-role = APIBlueprint('role', __name__, url_prefix='/api/roles')
+role = APIBlueprint('role', __name__)
 
 
 @role.post('/api/roles')
-@role.auth_required(auth)
+@role.auth_required(auth, roles=['admin'])
 @role.doc(description='Create a role', responses=[201,  409])
 @role.input(AuthorizationHeader, location='headers')
 @role.input(RoleIn, location='json', example=RoleIn.example())
@@ -41,7 +41,7 @@ def read_role(id):
 
 
 @role.patch('/api/roles/<int:id>')
-@role.auth_required(auth)
+@role.auth_required(auth, roles=['admin'])
 @role.doc(description='Update a role', responses=[204,  404])
 @role.input(AuthorizationHeader, location='headers')
 @role.input(RoleIn, location='json', example=RoleIn.example())
@@ -53,7 +53,7 @@ def update_role(id, json_data):
 
 
 @role.delete('/api/roles/<int:id>')
-@role.auth_required(auth)
+@role.auth_required(auth, roles=['admin'])
 @role.doc(description='Delete a role', responses=[204])
 @role.input(AuthorizationHeader, location='headers')
 @role.output(EmptySchema, 204)

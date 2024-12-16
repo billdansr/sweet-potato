@@ -13,7 +13,7 @@ def generate_token(user_id):
     is_admin = query_db('SELECT "is_admin" FROM "users" WHERE "id" = ? LIMIT 1;', (user_id,), one=True)['is_admin']
 
     header = {'alg': current_app.config['JWT_ALGORITHM']}
-    payload = {'id': user_id, 'admin': is_admin, 'exp': (datetime.now(timezone.utc) + timedelta(minutes=20)).timestamp()}
+    payload = {'id': user_id, 'exp': (datetime.now(timezone.utc) + timedelta(minutes=20)).timestamp()}
     
     token = jwt.encode(header, payload, current_app.config['SECRET_KEY'])
     return token.decode('utf-8')
@@ -35,7 +35,13 @@ def verify_token(token):
     return user
 
 
-authentication = APIBlueprint('authentication', __name__, url_prefix='/auth')
+@auth.get_user_roles
+def get_user_roles(user):
+    role = 'admin' if user['is_admin'] else 'user'
+    return role
+
+
+authentication = APIBlueprint('authentication', __name__)
 
 
 @authentication.post('/register')

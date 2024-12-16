@@ -19,8 +19,9 @@ DROP VIEW IF EXISTS "view_top_rated_games";
 DROP VIEW IF EXISTS "view_game_genres";
 DROP VIEW IF EXISTS "view_game_platforms";
 DROP VIEW IF EXISTS "view_game_companies";
-DROP TRIGGER IF EXISTS "trigger_update_user_profile";
-DROP TRIGGER IF EXISTS "trigger_update_rating";
+DROP TRIGGER IF EXISTS "trigger_update_user_profile_timestamp";
+DROP TRIGGER IF EXISTS "trigger_update_rating_timestamp";
+DROP TRIGGER IF EXISTS "trigger_create_profile_after_user_creation";
 
 CREATE TABLE "users" (
     "id" INTEGER,
@@ -206,7 +207,21 @@ FROM "games"
 INNER JOIN "game_companies" ON "game_companies"."game_id" = "games"."id"
 INNER JOIN "companies" ON "companies"."id" = "game_companies"."company_id";
 
-CREATE TRIGGER "trigger_update_user_profile"
+CREATE VIEW "view_game_ratings" AS
+SELECT "games"."title" AS "game",
+    "user_profiles"."name" AS "user",
+    "user_profiles"."avatar",
+    "ratings"."score",
+    "ratings"."review",
+    "ratings"."created_at",
+    "ratings"."updated_at"
+FROM "ratings"
+INNER JOIN "games" ON "games"."id" = "ratings"."game_id"
+INNER JOIN "users" ON "users"."id" = "ratings"."user_id"
+INNER JOIN "user_profiles" ON "user_profiles"."user_id" = "users"."id";
+
+
+CREATE TRIGGER "trigger_update_user_profile_timestamp"
 AFTER UPDATE
 ON "user_profiles"
 FOR EACH ROW
@@ -216,7 +231,7 @@ BEGIN
     WHERE "user_id" = NEW."user_id";
 END;
 
-CREATE TRIGGER "trigger_update_rating"
+CREATE TRIGGER "trigger_update_rating_timestamp"
 AFTER UPDATE
 ON "ratings"
 FOR EACH ROW
@@ -224,4 +239,13 @@ BEGIN
     UPDATE "ratings"
     SET "updated_at" = (unixepoch('now'))
     WHERE "user_id" = NEW."user_id" AND "game_id" = NEW."game_id";
+END;
+
+CREATE TRIGGER "trigger_create_profile_after_user_creation"
+AFTER INSERT
+ON "users"
+FOR EACH ROW
+BEGIN
+    INSERT INTO "user_profiles" ("user_id", "name")
+    VALUES (NEW."id", NEW."username");
 END;

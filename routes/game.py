@@ -7,11 +7,11 @@ from flask import url_for, current_app
 from schemas import GameIn, GameOut, GamesOut, GamesQuery, EmptySchema, CreatedSchema, AuthorizationHeader
 from werkzeug.utils import secure_filename
 
-game = APIBlueprint('game', __name__, url_prefix='/api/games')
+game = APIBlueprint('game', __name__)
 
 
 @game.post('/')
-@game.auth_required(auth)
+@game.auth_required(auth, roles=['admin'])
 @game.doc(description='Create a new game', responses=[201, 409, 422])
 @game.input(AuthorizationHeader, location='headers')
 @game.input(GameIn, location='files')
@@ -135,7 +135,7 @@ def read_game(id):
 
 
 @game.patch('/<int:id>')
-@game.auth_required(auth)
+@game.auth_required(auth, roles=['admin'])
 @game.doc(description='Update a game', responses=[204, 404, 422])
 @game.input(AuthorizationHeader, location='headers')
 @game.input(GameIn, location='files')
@@ -187,7 +187,7 @@ def update_game(id, files_data):
 
 
 @game.delete('/<int:id>')
-@game.auth_required(auth)
+@game.auth_required(auth, roles=['admin'])
 @game.doc(description='Delete a game', responses=[204])
 @game.input(AuthorizationHeader, location='headers')
 @game.output(EmptySchema, 204)

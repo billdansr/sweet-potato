@@ -4,11 +4,11 @@ from flask import url_for
 from routes import auth
 from schemas import GenreIn, GenreOut, GenresOut, EmptySchema, CreatedSchema, AuthorizationHeader
 
-genre = APIBlueprint('genre', __name__, url_prefix='/api/genres')
+genre = APIBlueprint('genre', __name__)
 
 
 @genre.post('/')
-@genre.auth_required(auth)
+@genre.auth_required(auth, roles=['admin'])
 @genre.doc(description='Create a genre', responses=[201, 409])
 @genre.input(AuthorizationHeader, location='headers')
 @genre.input(GenreIn, location='json', example=GenreIn.example())
@@ -40,7 +40,7 @@ def read_genre(id):
 
 
 @genre.patch('/<int:id>')
-@genre.auth_required(auth)
+@genre.auth_required(auth, roles=['admin'])
 @genre.doc(description='Update a genre', responses=[204, 404])
 @genre.input(AuthorizationHeader, location='headers')
 @genre.input(GenreIn, location='json', example=GenreIn.example())
@@ -51,7 +51,7 @@ def update_genre(id, json_data):
 
 
 @genre.delete('/<int:id>')
-@genre.auth_required(auth)
+@genre.auth_required(auth, roles=['admin'])
 @genre.doc(description='Delete a genre', responses=[204])
 @genre.input(AuthorizationHeader, location='headers')
 @genre.output(EmptySchema, 204)

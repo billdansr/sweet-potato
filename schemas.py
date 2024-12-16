@@ -1,7 +1,7 @@
 from apiflask import Schema
 from apiflask.fields import String, Integer, Date, URL, List, Dict, File, DateTime
 from apiflask.schemas import EmptySchema
-from apiflask.validators import FileSize, FileType
+from apiflask.validators import FileSize, FileType, Range
 
 
 class Token(Schema):
@@ -21,8 +21,8 @@ class AuthorizationHeader(Schema):
 
 
 class UserProfileIn(Schema):
-    name = String(required=True)
-    avatar = File()
+    name = String(required=True, allow_none=False)
+    avatar = File(allow_none=True, validate=[FileType(['.png', '.jpg', '.jpeg']), FileSize(max='5 MB')])
 
 
 class UserIn(Schema):
@@ -57,18 +57,18 @@ class UserOut(Schema):
 class GameIn(Schema):
     title = String(required=True)
     description = String()
-    release_date = Date()
+    release_date = Date(allow_none=True)
     genres = List(String)
     platforms = List(String)
     companies = List(String)
-    media = List(File(validate=[FileType(['.png', '.jpg', '.jpeg', '.gif', '.mp4']), FileSize(max='100 MB')]))
+    media = List(File(validate=[FileType(['.png', '.jpg', '.jpeg', '.gif', '.mp4']), FileSize(max='100 MB')]), allow_none=True)
 
 
 class GameOut(Schema):
     id = Integer(required=True)
     title = String(required=True)
     description = String()
-    release_date = Date()
+    release_date = Date(allow_none=True)
     media = String()
     genres = List(Dict)
     platforms = List(Dict)
@@ -113,8 +113,8 @@ class GameOut(Schema):
 
 class GamesOut(Schema):
     count = Integer(required=True)
-    next = String()
-    previous = String()
+    next = String(allow_none=True)
+    previous = String(allow_none=True)
     results = List(Dict)
 
     @staticmethod
@@ -215,7 +215,7 @@ class PlatformsOut(Schema):
 
 class CompanyIn(Schema):
     name = String(required=True)
-    founding_date = Date()
+    founding_date = Date(allow_none=True)
     headquarters = List(String)
     roles = List(String)
 
@@ -302,4 +302,49 @@ class CreatedSchema(Schema):
         return {
             'message': 'Data created successfully!',
             'id': 1
+        }
+    
+
+class UpdatedSchema(Schema):
+    message = String(required=True)
+
+    @staticmethod
+    def example():
+        return {
+            'message': 'Data updated successfully!'
+        }
+    
+
+class RatingIn(Schema):
+    game_id = Integer(required=True)
+    score = Integer(required=True, validate=Range(min=0, max=10))
+    review = String(allow_none=True)
+
+    @staticmethod
+    def example():
+        return {
+            'game_id': 1,
+            'score': 10,
+            'review': 'This game is amazing!'
+        }
+    
+class RatingOut(Schema):
+    avatar = URL(allow_none=True)
+    user = String(required=True)
+    game = String(required=True)
+    score = Integer(required=True, validate=Range(min=0, max=10))
+    review = String(allow_none=True)
+    created_at = DateTime()
+    updated_at = DateTime(allow_none=True)
+
+    @staticmethod
+    def example():
+        return {
+            'avatar': 'https://example.com/avatar.png',
+            'user': 'ohayou',
+            'game': 'The Legend of Zelda: Breath of the Wild',
+            'score': 5,
+            'review': 'This game is amazing!',
+            'created_at': '2021-01-01T00:00:00Z',
+            'updated_at': '2021-01-01T00:00:00Z'
         }

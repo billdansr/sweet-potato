@@ -4,11 +4,11 @@ from flask import url_for
 from routes import auth
 from schemas import PlatformIn, PlatformOut, PlatformsOut, EmptySchema, CreatedSchema, AuthorizationHeader
 
-platform = APIBlueprint('platform', __name__, url_prefix='/api/platforms')
+platform = APIBlueprint('platform', __name__)
 
 
 @platform.post('/')
-@platform.auth_required(auth)
+@platform.auth_required(auth, roles=['admin'])
 @platform.doc(description='Create a platform', responses=[201, 409])
 @platform.input(AuthorizationHeader, location='headers')
 @platform.input(PlatformIn, location='json', example=PlatformIn.example())
@@ -41,7 +41,7 @@ def read_platform(id):
 
 
 @platform.patch('/<int:id>')
-@platform.auth_required(auth)
+@platform.auth_required(auth, roles=['admin'])
 @platform.doc(description='Update a platform', responses=[204, 404])
 @platform.input(AuthorizationHeader, location='headers')
 @platform.input(PlatformIn, location='json', example=PlatformIn.example())
@@ -53,7 +53,7 @@ def update_platform(id, json_data):
 
 
 @platform.delete('/<int:id>')
-@platform.auth_required(auth)
+@platform.auth_required(auth, roles=['admin'])
 @platform.doc(description='Delete a platform', responses=[204])
 @platform.input(AuthorizationHeader, location='headers')
 @platform.output(EmptySchema, 204)

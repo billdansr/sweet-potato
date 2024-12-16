@@ -2,7 +2,7 @@ import os
 from apiflask import APIFlask
 from db import init_app
 from flask_cors import CORS
-from routes import authentication, company, game, genre, platform, role, user
+from routes import authentication, company, game, genre, rating, platform, role, user
 from flask import send_from_directory
 
 app = APIFlask(__name__, docs_ui='swagger-ui', title='Sweet Potato API', version='1.0.0')
@@ -31,10 +31,11 @@ def read_upload(filename):
 
 
 # Register blueprints
-app.register_blueprint(authentication)
-app.register_blueprint(company)
-app.register_blueprint(game)
-app.register_blueprint(genre)
-app.register_blueprint(platform)
-app.register_blueprint(role)
-app.register_blueprint(user)
+app.register_blueprint(authentication, url_prefix='/auth')
+app.register_blueprint(company, url_prefix='/api/companies')
+app.register_blueprint(game, url_prefix='/api/games')
+app.register_blueprint(genre, url_prefix='/api/genres')
+app.register_blueprint(platform, url_prefix='/api/platforms')
+app.register_blueprint(rating, url_prefix='/api/ratings')
+app.register_blueprint(role, url_prefix='/api/roles')
+app.register_blueprint(user, url_prefix='/api/users')

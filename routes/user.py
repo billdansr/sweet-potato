@@ -7,7 +7,7 @@ from routes import auth
 from schemas import UserProfileIn, UserOut, EmptySchema, AuthorizationHeader
 from werkzeug.utils import secure_filename
 
-user = APIBlueprint('user', __name__, url_prefix='/api/users')
+user = APIBlueprint('user', __name__)
 
 
 @user.get('/<int:id>')
@@ -41,10 +41,6 @@ def update_user(files_data):
     user = auth.current_user
     name = files_data.get('name')
     avatar = files_data.get('avatar')
-
-    if not query_db('SELECT "user_id" FROM "user_profiles" WHERE "user_id" = ?;', (user['id'],), one=True):
-        query_db('INSERT INTO "user_profiles" ("user_id") VALUES (?);', (user['id'],))
-        query_db('COMMIT;')
 
     query_db('UPDATE "user_profiles" SET "name" = ? WHERE "user_id" = ?;', (name, user['id'],))
 

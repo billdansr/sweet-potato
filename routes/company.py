@@ -4,11 +4,11 @@ from flask import url_for
 from routes import auth
 from schemas import CompanyIn, CompanyOut, CompaniesOut, EmptySchema, CreatedSchema, AuthorizationHeader
 
-company = APIBlueprint('company', __name__, url_prefix='/api/companies')
+company = APIBlueprint('company', __name__)
 
 
 @company.post('/')
-@company.auth_required(auth)
+@company.auth_required(auth, roles=['admin'])
 @company.doc(description='Create a company', responses=[201, 409])
 @company.input(AuthorizationHeader, location='headers')
 @company.input(CompanyIn, location='json', example=CompanyIn.example())
@@ -62,7 +62,7 @@ def read_company(id):
 
 
 @company.patch('/<int:id>')
-@company.auth_required(auth)
+@company.auth_required(auth, roles=['admin'])
 @company.doc(description='Update a company', responses=[204, 404])
 @company.input(AuthorizationHeader, location='headers')
 @company.input(CompanyIn, location='json', example=CompanyIn.example())
@@ -92,7 +92,7 @@ def update_company(id, json_data):
 
 
 @company.delete('/<int:id>')
-@company.auth_required(auth)
+@company.auth_required(auth, roles=['admin'])
 @company.doc(description='Delete a company', responses=[204])
 @company.input(AuthorizationHeader, location='headers')
 @company.output(EmptySchema, 204)

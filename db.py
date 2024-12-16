@@ -9,6 +9,7 @@ def get_db():
     db = getattr(g, '_database', None)
     if db is None:
         db = g._database = sqlite3.connect(DATABASE)
+        db.row_factory = sqlite3.Row
     return db
 
 
@@ -19,10 +20,18 @@ def close_connection(exception):
 
 
 def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
+    db = get_db()
+    cur = db.execute(query, args)
     rv = cur.fetchall()
     cur.close()
+
+    if query.startswith('UPDATE') or query.startswith('DELETE'):
+        return cur.rowcount
+    elif query.startswith('INSERT'):
+        return cur.lastrowid
+    
     return (rv[0] if rv else None) if one else rv
+    
 
 
 def init_db():

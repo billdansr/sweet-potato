@@ -10,7 +10,7 @@ CREATE TABLE "users" (
 CREATE TABLE "user_profiles" (
     "user_id" INTEGER,
     "name" TEXT,
-    "picture_url" TEXT,
+    "avatar_filename" TEXT,
     "updated_at" INTEGER,
     PRIMARY KEY("user_id"),
     FOREIGN KEY("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE
@@ -18,7 +18,7 @@ CREATE TABLE "user_profiles" (
 
 CREATE TABLE "games" (
     "id" INTEGER,
-    "title" TEXT NOT NULL,
+    "title" TEXT NOT NULL UNIQUE,
     "description" TEXT,
     "release_date" INTEGER,
     PRIMARY KEY("id")
@@ -27,8 +27,7 @@ CREATE TABLE "games" (
 CREATE TABLE "media" (
     "id" INTEGER,
     "game_id" INTEGER,
-    "file_name" TEXT NOT NULL UNIQUE,
-    "file_type" TEXT NOT NULL CHECK("file_type" IN ('image', 'video')),
+    "filename" TEXT NOT NULL UNIQUE,
     PRIMARY KEY("id"),
     FOREIGN KEY("game_id") REFERENCES "games"("id") ON DELETE RESTRICT ON UPDATE SET NULL
 );

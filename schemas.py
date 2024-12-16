@@ -1,0 +1,236 @@
+from apiflask import Schema
+from apiflask.fields import String, Integer, Date, URL, List, Dict, File
+
+
+class UserProfileIn(Schema):
+    name = String()
+    avatar = File()
+
+class UserIn(Schema):
+    username = String(required=True)
+    password = String(required=True)
+
+class UserOut(Schema):
+    id = Integer(required=True)
+    username = String(required=True)
+    name = String()
+    avatar = URL()
+
+class GameIn(Schema):
+    title = String(required=True)
+    description = String()
+    release_date = Date()
+    genres = List(String)
+    platforms = List(String)
+    companies = List(String)
+    media = List(File)
+
+class GameOut(Schema):
+    id = Integer(required=True)
+    title = String(required=True)
+    description = String()
+    release_date = Date()
+    media = String()
+    genres = List(Dict)
+    platforms = List(Dict)
+    companies = List(Dict)
+
+    @staticmethod
+    def example():
+        return {
+            'id': 1,
+            'title': 'The Legend of Zelda: Breath of the Wild',
+            'description': 'The Legend of Zelda: Breath of the Wild is an action-adventure game developed and published by Nintendo for the Nintendo Switch and Wii U.',
+            'release_date': '2017-03-03',
+            'media': 'https://example.com/1/media',
+            'genres': [
+                {
+                    'name': 'Action',
+                    'url': 'https://example.com/genres/1'
+                },
+                {
+                    'name': 'Adventure',
+                    'url': 'https://example.com/genres/2'
+                }
+            ],
+            'platforms': [
+                {
+                    'name': 'Nintendo Switch',
+                    'url': 'https://example.com/platforms/1'
+                },
+                {
+                    'name': 'Wii U',
+                    'url': 'https://example.com/platforms/2'
+                }
+            ],
+            'companies': [
+                {
+                    'name': 'Nintendo',
+                    'url': 'https://example.com/companies/1'
+                }
+            ]
+        }
+
+class GamesOut(Schema):
+    count = Integer(required=True)
+    next = String()
+    previous = String()
+    results = List(Dict)
+
+    @staticmethod
+    def example():
+        return {
+            'count': 6,
+            'next': 'https://example.com/games/?offset=4&limit=2',
+            'previous': 'https://example.com/games/?offset=0&limit=2',
+            'results': [
+                {
+                    "title": "The Legend of Zelda: Breath of the Wild",
+                    "url": "https://example.com/games/1"
+                },
+                {
+                    "title": "The Legend of Zelda: Twilight Princess",
+                    "url": "https://example.com/games/2"
+                }
+            ]
+        }
+    
+class GenreIn(Schema):
+    name = String(required=True)
+
+    @staticmethod
+    def example():
+        return {
+            'name': 'Action'
+        }
+
+class GenreOut(Schema):
+    id = Integer(required=True)
+    name = String(required=True)
+
+    @staticmethod
+    def example():
+        return {
+            'id': '1',
+            'name': 'Action'
+        }
+
+class GenresOut(Schema):
+    name = String(required=True)
+    url = URL()
+
+    @staticmethod
+    def example():
+        return [
+            {
+                'name': 'Action',
+                'url': 'https://example.com/genres/1'
+            }
+        ]
+
+class PlatformIn(Schema):
+    name = String(required=True)
+
+    @staticmethod
+    def example():
+        return {
+            'name': 'Nintendo Switch'
+        }
+
+class PlatformOut(Schema):
+    id = Integer(required=True)
+    name = String(required=True)
+
+    @staticmethod
+    def example():
+        return {
+            'id': 1,
+            'name': 'Nintendo Switch'
+        }
+
+class PlatformsOut(Schema):
+    name = String(required=True)
+    url = URL()
+
+    @staticmethod
+    def example():
+        return [
+            {
+                'name': 'Nintendo Switch',
+                'url': 'https://example.com/platforms/1'
+            }
+        ]
+
+class CompanyIn(Schema):
+    name = String(required=True)
+    founding_date = Date()
+    headquarters = List(String)
+    roles = List(String)
+
+    @staticmethod
+    def example():
+        return {
+            'name': 'Nintendo',
+            'founding_date': '1889-09-23',
+            'headquarters': ['Kyoto, Japan'],
+            'roles': ['Developer', 'Publisher']
+        }
+    
+class CompanyOut(Schema):
+    id = Integer(required=True)
+    name = String(required=True)
+    founding_date = Date()
+
+    @staticmethod
+    def example():
+        return {
+            'id': 1,
+            'name': 'Nintendo',
+            'founding_date': '1889-09-23'
+        }
+    
+class CompaniesOut(Schema):
+    name = String(required=True)
+    url = URL()
+
+    @staticmethod
+    def example():
+        return [
+            {
+                'name': 'Nintendo',
+                'url': 'https://example.com/companies/1'
+            }
+        ]
+    
+class RoleIn(Schema):
+    name = String(required=True)
+
+    @staticmethod
+    def example():
+        return {
+            'name': 'Engine Developer'
+        }
+    
+class RoleOut(Schema):
+    id = Integer(required=True)
+    name = String(required=True)
+
+    @staticmethod
+    def example():
+        return {
+            'id': 1,
+            'name': 'Engine Developer'
+        }
+    
+class RolesOut(Schema):
+    name = String(required=True)
+    url = URL()
+
+    @staticmethod
+    def example():
+        return [
+            {
+                'name': 'Engine Developer',
+                'url': 'https://example.com/roles'
+            }
+        ]

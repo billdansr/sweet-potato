@@ -69,8 +69,6 @@ def read_games(query_data):
     offset = query_data.get('offset')
     limit = query_data.get('limit')
 
-    print(offset, limit)
-
     count = query_db('SELECT COUNT(*) FROM "games";', one=True)['COUNT(*)']
 
     next = url_for('game.read_games', offset=offset + limit, limit=limit, _external=True) if offset + limit < count else None

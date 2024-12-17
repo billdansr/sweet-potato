@@ -1,5 +1,5 @@
 INSERT INTO "users" ("username", "password", "is_admin")
-VALUES ('admin', 'admin', 1);
+VALUES ('admin', 'scrypt:32768:8:1$o3Yrx54yHYKC1LIV$464df00efa0064e32aefe239d895ce002a4b9aee40fe02f600cf108f99896cafcf51baa52e1787853becc588fd0777cd09b1720b033950e0c0900efbd42e4b0e', 1);
 
 INSERT INTO "games" ("title", "description", "release_date")
 VALUES ('Agni: Village of Calamity', 'Agni, a determined investigator from a covert Indonesian police unit who defied orders and ventures into a remote village despite ominous warnings. What begins as an unauthorized investigation quickly plunges Agni into a horrifying reality', UNIXEPOCH('1970-01-01')),

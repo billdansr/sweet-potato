@@ -13,7 +13,7 @@ platform = APIBlueprint('platform', __name__)
 @platform.input(AuthorizationHeader, location='headers')
 @platform.input(PlatformIn, location='json', example=PlatformIn.example())
 @platform.output(CreatedSchema, 201, example=CreatedSchema.example())
-def create_platform(json_data):
+def create_platform(json_data, headers_data):
     platform_id = query_db('INSERT INTO "platforms" ("name") VALUES (?);', (json_data['name'],)) if not query_db('SELECT "name" FROM "platforms" WHERE "name" = ? LIMIT 1;', (json_data['name'],), one=True) else abort(409, detail={"field": "name", "issue": f"Platform already exists: {json_data['name']}"})
     query_db('COMMIT;')
     return {'message': 'Platform created successfully!', 'id': platform_id}, 201
@@ -46,7 +46,7 @@ def read_platform(id):
 @platform.input(AuthorizationHeader, location='headers')
 @platform.input(PlatformIn, location='json', example=PlatformIn.example())
 @platform.output(EmptySchema, 204)
-def update_platform(id, json_data):
+def update_platform(id, json_data, headers_data):
     query_db('UPDATE "platforms" SET "name" = ? WHERE "id" = ?;', (json_data['name'], id,)) or abort(404, detail='Platform not found')
     query_db('COMMIT;')
     return '', 204
@@ -57,7 +57,7 @@ def update_platform(id, json_data):
 @platform.doc(description='Delete a platform', responses=[204])
 @platform.input(AuthorizationHeader, location='headers')
 @platform.output(EmptySchema, 204)
-def delete_platform(id):
+def delete_platform(id, headers_data):
     query_db('DELETE FROM "platforms" WHERE "id" = ?;', (id,))
     query_db('COMMIT;')
     return '', 204

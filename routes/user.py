@@ -37,7 +37,7 @@ def read_user(id):
 @user.input(AuthorizationHeader, location='headers')
 @user.input(UserProfileIn, location='files')
 @user.output(EmptySchema, 204)
-def update_user(files_data):
+def update_user(files_data, headers_data):
     user = auth.current_user
     name = files_data.get('name')
     avatar = files_data.get('avatar')

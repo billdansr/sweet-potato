@@ -12,7 +12,7 @@ rating = APIBlueprint('rating', __name__)
 @rating.input(AuthorizationHeader, location='headers')
 @rating.input(RatingIn, location='json', example=RatingIn.example())
 @rating.output(CreatedSchema, 201, example=CreatedSchema.example())
-def create_rating(json_data):
+def create_rating(json_data, headers_data):
     user = auth.current_user
     game_id = json_data.get('game_id')
     score = json_data.get('score')
@@ -46,7 +46,7 @@ def get_ratings():
 @rating.input(AuthorizationHeader, location='headers')
 @rating.input(RatingIn, location='json', example=RatingIn.example())
 @rating.output(UpdatedSchema, 200, example=UpdatedSchema.example())
-def update_rating(id, json_data):
+def update_rating(id, json_data, headers_data):
     user = auth.current_user
     score = json_data.get('score')
     review = json_data.get('review')
@@ -65,7 +65,7 @@ def update_rating(id, json_data):
 @rating.doc(description='Delete rating', responses=[204])
 @rating.input(AuthorizationHeader, location='headers')
 @rating.output(EmptySchema, 204)
-def delete_rating(id):
+def delete_rating(id, headers_data):
     query_db('DELETE FROM "ratings" WHERE "user_id" = ? AND "game_id" = ?;', 
                 (auth.current_user['id'], id,))
     query_db('COMMIT;')

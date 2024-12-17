@@ -13,7 +13,7 @@ role = APIBlueprint('role', __name__)
 @role.input(AuthorizationHeader, location='headers')
 @role.input(RoleIn, location='json', example=RoleIn.example())
 @role.output(CreatedSchema, 201, example=CreatedSchema.example())
-def create_role(json_data):
+def create_role(json_data, headers_data):
     role_id = query_db('INSERT INTO "roles" ("name") VALUES (?);', (json_data['name'],)) if not query_db('SELECT "name" FROM "roles" WHERE "name" = ? LIMIT 1;', (json_data['name'],), one=True) else abort(409, detail={"field": "name", "issue": f"Role already exists: {json_data['name']}"})
     query_db('COMMIT;')
     return {'message': 'Role created successfully!', 'id': role_id}, 201
@@ -58,7 +58,7 @@ def update_role(id, json_data):
 @role.doc(description='Delete a role', responses=[204])
 @role.input(AuthorizationHeader, location='headers')
 @role.output(EmptySchema, 204)
-def delete_role(id):
+def delete_role(id, headers_data):
     query_db('DELETE FROM "roles" WHERE "id" = ?;', (id,))
     query_db('COMMIT;')
     return '', 204

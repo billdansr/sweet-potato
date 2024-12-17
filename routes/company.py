@@ -13,7 +13,7 @@ company = APIBlueprint('company', __name__)
 @company.input(AuthorizationHeader, location='headers')
 @company.input(CompanyIn, location='json', example=CompanyIn.example())
 @company.output(CreatedSchema, 201, example=CreatedSchema.example())
-def create_company(json_data):
+def create_company(json_data, headers_data):
     company_id = query_db('INSERT INTO "companies" ("name") VALUES (?);', (json_data['name'],)) if not query_db('SELECT "name" FROM "companies" WHERE "name" = ? LIMIT 1;', (json_data['name'],), one=True) else abort(409, detail={"field": "name", "issue": f"Company already exists: {json_data['name']}"})
     query_db('COMMIT;')
     return {'message': 'Company created successfully!', 'id': company_id}, 201
@@ -60,7 +60,7 @@ def read_company(id):
 @company.input(AuthorizationHeader, location='headers')
 @company.input(CompanyIn, location='json', example=CompanyIn.example())
 @company.output(EmptySchema, 204)
-def update_company(id, json_data):
+def update_company(id, json_data, headers_data):
     name = json_data['name']
     founding_date = json_data['founding_date']
     headquarters = json_data['headquarters']
@@ -89,7 +89,7 @@ def update_company(id, json_data):
 @company.doc(description='Delete a company', responses=[204])
 @company.input(AuthorizationHeader, location='headers')
 @company.output(EmptySchema, 204)
-def delete_company(id):
+def delete_company(id, headers_data):
     query_db('DELETE FROM "companies" WHERE "id" = ?;', (id,))
     query_db('COMMIT;')
     return '', 204

@@ -13,7 +13,7 @@ genre = APIBlueprint('genre', __name__)
 @genre.input(AuthorizationHeader, location='headers')
 @genre.input(GenreIn, location='json', example=GenreIn.example())
 @genre.output(CreatedSchema, 201, example=CreatedSchema.example())
-def create_genre(json_data):
+def create_genre(json_data, headers_data):
     genre_id = query_db('INSERT INTO "genres" ("name") VALUES (?);', (json_data['name'],)) if not query_db('SELECT "name" FROM "genres" WHERE "name" = ? LIMIT 1;', (json_data['name'],), one=True) else abort(409, detail={"field": "name", "issue": f"Genre already exists: {json_data['name']}"})
     query_db('COMMIT;')
     return {'message': 'Genre created successfully!', 'id': genre_id}, 201
@@ -45,7 +45,7 @@ def read_genre(id):
 @genre.input(AuthorizationHeader, location='headers')
 @genre.input(GenreIn, location='json', example=GenreIn.example())
 @genre.output(EmptySchema, 204)
-def update_genre(id, json_data):
+def update_genre(id, json_data, headers_data):
     query_db('UPDATE "genres" SET "name" = ? WHERE "id" = ?;', (json_data['name'], id,)) or abort(404, detail='Genre not found')
     return '', 204
 
@@ -55,7 +55,7 @@ def update_genre(id, json_data):
 @genre.doc(description='Delete a genre', responses=[204])
 @genre.input(AuthorizationHeader, location='headers')
 @genre.output(EmptySchema, 204)
-def delete_genre(id):
+def delete_genre(id, headers_data):
     query_db('DELETE FROM "genres" WHERE "id" = ?;', (id,))
     query_db('COMMIT;')
     return '', 204

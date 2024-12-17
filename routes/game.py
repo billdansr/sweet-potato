@@ -16,7 +16,7 @@ game = APIBlueprint('game', __name__)
 @game.input(AuthorizationHeader, location='headers')
 @game.input(GameIn, location='files')
 @game.output(CreatedSchema, 201, example=CreatedSchema.example())
-def create_game(files_data):
+def create_game(files_data, headers_data):
     title = files_data.get('title')
     description = files_data.get('description')
     release_date = files_data.get('release_date')
@@ -125,7 +125,7 @@ def read_game(id):
 @game.input(AuthorizationHeader, location='headers')
 @game.input(GameIn, location='files')
 @game.output(EmptySchema, 204)
-def update_game(id, files_data):
+def update_game(id, files_data, headers_data):
     title = files_data.get('title')
     description = files_data.get('description')
     release_date = files_data.get('release_date')
@@ -176,7 +176,7 @@ def update_game(id, files_data):
 @game.doc(description='Delete a game', responses=[204])
 @game.input(AuthorizationHeader, location='headers')
 @game.output(EmptySchema, 204)
-def delete_game(id):
+def delete_game(id, headers_data):
     for filename in query_db('SELECT "filename" FROM "media" WHERE "game_id" = ?;', (id,)):
         file_path = os.path.join(current_app.config['UPLOAD_DIR'], filename['filename'])
         if os.path.exists(file_path):

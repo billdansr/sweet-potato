@@ -10,8 +10,6 @@ auth = HTTPTokenAuth(scheme='Bearer')
 
 
 def generate_token(user_id):
-    is_admin = query_db('SELECT "is_admin" FROM "users" WHERE "id" = ? LIMIT 1;', (user_id,), one=True)['is_admin']
-
     header = {'alg': current_app.config['JWT_ALGORITHM']}
     payload = {'id': user_id, 'exp': (datetime.now(timezone.utc) + timedelta(minutes=20)).timestamp()}
     
@@ -55,7 +53,6 @@ def register(json_data):
     user_id = query_db('INSERT INTO "users" ("username", "password") VALUES (?, ?);',
                 (username, generate_password_hash(password),)) if not query_db('SELECT "username" FROM "users" WHERE "username" = ? LIMIT 1;', 
                                                                                 (username,), one=True) else abort(409, detail='Username already exists.')
-
     query_db('COMMIT;')
 
     return {'message': 'Registration successful.', 'id': user_id}, 201

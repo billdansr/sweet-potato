@@ -30,7 +30,7 @@ CREATE TABLE "users" (
     "id" INTEGER,
     "username" TEXT NOT NULL UNIQUE,
     "password" TEXT NOT NULL,
-    "is_admin" NUMERIC NOT NULL DEFAULT 0 CHECK("is_admin" IN (0, 1)),
+    "is_admin" NUMERIC NOT NULL DEFAULT 0 CHECK ("is_admin" IN (0, 1)),
     "created_at" INTEGER DEFAULT (strftime('%s', 'now')),
     PRIMARY KEY("id")
 );
@@ -57,19 +57,19 @@ CREATE TABLE "media" (
     "game_id" INTEGER,
     "filename" TEXT NOT NULL UNIQUE,
     PRIMARY KEY("id"),
-    FOREIGN KEY("game_id") REFERENCES "games"("id") ON DELETE RESTRICT ON UPDATE SET NULL
+    FOREIGN KEY("game_id") REFERENCES "games"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE "ratings" (
     "user_id" INTEGER,
     "game_id" INTEGER,
-    "score" INTEGER NOT NULL DEFAULT 0 CHECK("score" BETWEEN 0 AND 10),
+    "score" INTEGER NOT NULL DEFAULT 0 CHECK ("score" BETWEEN 0 AND 10),
     "review" TEXT,
     "created_at" INTEGER DEFAULT (strftime('%s', 'now')),
     "updated_at" INTEGER,
     PRIMARY KEY("user_id", "game_id"),
     FOREIGN KEY("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY("game_id") REFERENCES "games"("id") ON DELETE RESTRICT ON UPDATE RESTRICT
+    FOREIGN KEY("game_id") REFERENCES "games"("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 CREATE TABLE "platforms" (

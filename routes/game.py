@@ -177,8 +177,14 @@ def update_game(id, files_data):
 @game.input(AuthorizationHeader, location='headers')
 @game.output(EmptySchema, 204)
 def delete_game(id):
+    for filename in query_db('SELECT "filename" FROM "media" WHERE "game_id" = ?;', (id,)):
+        file_path = os.path.join(current_app.config['UPLOAD_DIR'], filename['filename'])
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
     query_db('DELETE FROM "games" WHERE "id" = ?;', (id,))
     query_db('COMMIT;')
+
     return '', 204
 
 @game.get('/<int:id>/media')

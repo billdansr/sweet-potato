@@ -26,8 +26,8 @@ init_app(app)
 CORS(app)
 
 # Create directory if it doesn't exist
-# os.makedirs(app.instance_path, exist_ok=True)
-# os.makedirs(app.config['UPLOAD_DIR'], exist_ok=True)
+os.makedirs(app.instance_path, exist_ok=True)
+os.makedirs(app.config['UPLOAD_DIR'], exist_ok=True)
 
 
 # Register routes

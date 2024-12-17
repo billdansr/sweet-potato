@@ -2,10 +2,10 @@ INSERT INTO "users" ("username", "password", "is_admin")
 VALUES ('admin', 'scrypt:32768:8:1$o3Yrx54yHYKC1LIV$464df00efa0064e32aefe239d895ce002a4b9aee40fe02f600cf108f99896cafcf51baa52e1787853becc588fd0777cd09b1720b033950e0c0900efbd42e4b0e', 1);
 
 INSERT INTO "games" ("title", "description", "release_date")
-VALUES ('Agni: Village of Calamity', 'Agni, a determined investigator from a covert Indonesian police unit who defied orders and ventures into a remote village despite ominous warnings. What begins as an unauthorized investigation quickly plunges Agni into a horrifying reality', UNIXEPOCH('1970-01-01')),
-    ('A Space for the Unbound', 'A magical adventure about two high school sweethearts set at the end of their school days - and the end of the world. Explore a crumbling town and help friends face their inner demons, which could be the key to stopping reality itself disintegrating. And don’t forget to pet the cats.', UNIXEPOCH('2023-01-19')),
-    ('DIVINATION', '"What if you''re born into this world without your permission?" DIVINATION is a very short visual novel where you act as a fortune teller in a futuristic world. Talk and listen to people''s stories, then foresee their future using the runes they had drawn.', UNIXEPOCH('2019-12-13')),
-    ('DreadOut 2', 'A third-person horror adventure that draws inspiration from Indonesian urban legend. Play as Linda, a high school student with the ability to sense and see ghosts. This spine-chilling sequel expands on the cult hit original, making DreadOut 2 another terrifying addition to the horror genre.', UNIXEPOCH('2022-02-22'));
+VALUES ('Agni: Village of Calamity', 'Agni, a determined investigator from a covert Indonesian police unit who defied orders and ventures into a remote village despite ominous warnings. What begins as an unauthorized investigation quickly plunges Agni into a horrifying reality', strftime('%s', '1970-01-01')),
+    ('A Space for the Unbound', 'A magical adventure about two high school sweethearts set at the end of their school days - and the end of the world. Explore a crumbling town and help friends face their inner demons, which could be the key to stopping reality itself disintegrating. And don’t forget to pet the cats.', strftime('%s', '2023-01-19')),
+    ('DIVINATION', '"What if you''re born into this world without your permission?" DIVINATION is a very short visual novel where you act as a fortune teller in a futuristic world. Talk and listen to people''s stories, then foresee their future using the runes they had drawn.', strftime('%s', '2019-12-13')),
+    ('DreadOut 2', 'A third-person horror adventure that draws inspiration from Indonesian urban legend. Play as Linda, a high school student with the ability to sense and see ghosts. This spine-chilling sequel expands on the cult hit original, making DreadOut 2 another terrifying addition to the horror genre.', strftime('%s', '2022-02-22'));
 
 INSERT INTO "genres" ("name")
 VALUES ('Adventure'),
@@ -28,9 +28,9 @@ VALUES ('PC'),
 
 INSERT INTO "companies" ("name", "founding_date")
 VALUES ('Separuh Interactive', 0),
-    ('Digital Happiness', UNIXEPOCH('2013-01-01')),
-    ('Toge Productions', UNIXEPOCH('2009-01-20')),
-    ('Mojiken Studio', UNIXEPOCH('2013-01-01'));
+    ('Digital Happiness', strftime('%s', '2013-01-01')),
+    ('Toge Productions', strftime('%s', '2009-01-20')),
+    ('Mojiken Studio', strftime('%s', '2013-01-01'));
 
 INSERT INTO "headquarters" ("company_id", "location")
 VALUES (

@@ -69,7 +69,7 @@ def update_company(id, json_data):
     if name:
         query_db('UPDATE "companies" SET "name" = ? WHERE "id" = ?;', (name, id,)) or abort(404, detail='Company not found')
     if founding_date:
-        query_db('UPDATE "companies" SET "founding_date" = unixepoch(?) WHERE "id" = ?;', (founding_date, id,))
+        query_db('UPDATE "companies" SET "founding_date" = strftime(\'%s\', ?) WHERE "id" = ?;', (founding_date, id,))
     if headquarters:
         query_db('DELETE FROM "headquarters" WHERE "company_id" = ?;', (id,))
         for location in headquarters:

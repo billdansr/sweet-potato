@@ -7,7 +7,7 @@ from schemas import RoleIn, RoleOut, RolesOut, EmptySchema, CreatedSchema, Autho
 role = APIBlueprint('role', __name__)
 
 
-@role.post('/api/roles')
+@role.post('/')
 @role.auth_required(auth, roles=['admin'])
 @role.doc(description='Create a role', responses=[201,  409])
 @role.input(AuthorizationHeader, location='headers')
@@ -19,10 +19,11 @@ def create_role(json_data):
     return {'message': 'Role created successfully!', 'id': role_id}, 201
 
 
-@role.get('/api/roles')
-@role.doc(description='Retrieve list roles', responses=[200, 404])
+@role.get('/')
+@role.doc(description='List roles', responses=[200, 404])
 @role.output(RolesOut(many=True), 200, example=RolesOut.example())
 def read_roles():
+    print('h')
     results = [dict(result) for result in query_db('SELECT * FROM "roles"')] or abort(404, detail='Roles not found')
 
     for result in results:
@@ -32,7 +33,7 @@ def read_roles():
     return results, 200
 
 
-@role.get('/api/roles/<int:id>')
+@role.get('/<int:id>')
 @role.doc(description='Single role', responses=[200,  404])
 @role.output(RoleOut, 200, example=RoleOut.example())
 def read_role(id):
@@ -40,7 +41,7 @@ def read_role(id):
     return result, 200
 
 
-@role.patch('/api/roles/<int:id>')
+@role.patch('/<int:id>')
 @role.auth_required(auth, roles=['admin'])
 @role.doc(description='Update a role', responses=[204,  404])
 @role.input(AuthorizationHeader, location='headers')
@@ -52,7 +53,7 @@ def update_role(id, json_data):
     return '', 204
 
 
-@role.delete('/api/roles/<int:id>')
+@role.delete('/<int:id>')
 @role.auth_required(auth, roles=['admin'])
 @role.doc(description='Delete a role', responses=[204])
 @role.input(AuthorizationHeader, location='headers')

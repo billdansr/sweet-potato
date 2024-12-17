@@ -31,7 +31,7 @@ CREATE TABLE "users" (
     "username" TEXT NOT NULL UNIQUE,
     "password" TEXT NOT NULL,
     "is_admin" NUMERIC NOT NULL DEFAULT 0 CHECK("is_admin" IN (0, 1)),
-    "created_at" INTEGER DEFAULT (unixepoch('now')),
+    "created_at" INTEGER DEFAULT (strftime('%s', 'now')),
     PRIMARY KEY("id")
 );
 
@@ -65,7 +65,7 @@ CREATE TABLE "ratings" (
     "game_id" INTEGER,
     "score" INTEGER NOT NULL DEFAULT 0 CHECK("score" BETWEEN 0 AND 10),
     "review" TEXT,
-    "created_at" INTEGER DEFAULT (unixepoch('now')),
+    "created_at" INTEGER DEFAULT (strftime('%s', 'now')),
     "updated_at" INTEGER,
     PRIMARY KEY("user_id", "game_id"),
     FOREIGN KEY("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE,
@@ -139,11 +139,11 @@ CREATE TABLE "company_roles" (
 
 CREATE VIEW "view_upcoming_games" AS
 SELECT * FROM "games"
-WHERE "release_date" > (unixepoch('now'));
+WHERE "release_date" > (strftime('%s', 'now'));
 
 CREATE VIEW "view_recent_games" AS
 SELECT * FROM "games"
-WHERE "release_date" <= (unixepoch('now'))
+WHERE "release_date" <= (strftime('%s', 'now'))
 ORDER BY "release_date" DESC;
 
 CREATE VIEW "view_popular_games" AS
@@ -243,7 +243,7 @@ ON "user_profiles"
 FOR EACH ROW
 BEGIN
     UPDATE "user_profiles"
-    SET "updated_at" = (unixepoch('now'))
+    SET "updated_at" = (strftime('%s', 'now'))
     WHERE "user_id" = NEW."user_id";
 END;
 
@@ -253,7 +253,7 @@ ON "ratings"
 FOR EACH ROW
 BEGIN
     UPDATE "ratings"
-    SET "updated_at" = (unixepoch('now'))
+    SET "updated_at" = (strftime('%s', 'now'))
     WHERE "user_id" = NEW."user_id" AND "game_id" = NEW."game_id";
 END;
 

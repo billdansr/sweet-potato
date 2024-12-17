@@ -25,7 +25,7 @@ def create_game(files_data):
     companies = files_data.get('companies')
     media = files_data.get('media')
 
-    game_id = query_db('INSERT INTO "games" ("title", "description", "release_date") VALUES (?, ?, unixepoch(?));', 
+    game_id = query_db('INSERT INTO "games" ("title", "description", "release_date") VALUES (?, ?, strftime(\'%s\', ?));', 
             (title, description, release_date,)) if not query_db('SELECT "title" FROM "games" WHERE "title" = ? LIMIT 1;', (title,), one=True) else abort(409, detail={"field": "title", "issue": f"Game title already exists: {title}"})
     
     if genres:
@@ -139,7 +139,7 @@ def update_game(id, files_data):
     if description:
         query_db('UPDATE "games" SET "description" = ? WHERE "id" = ?;', (description, id,))
     if release_date:
-        query_db('UPDATE "games" SET "release_date" = unixepoch(?) WHERE "id" = ?;', (release_date, id,))
+        query_db('UPDATE "games" SET "release_date" = strftime(\'%s\', ?) WHERE "id" = ?;', (release_date, id,))
     if genres:
         query_db('DELETE FROM "game_genres" WHERE "game_id" = ?;', (id,))
         for genre in genres:

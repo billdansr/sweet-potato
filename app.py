@@ -11,7 +11,7 @@ app.config['ENV'] = os.environ.get('ENV', 'production')
 app.config['DEBUG'] = os.environ.get('DEBUG', False)
 app.config['APP'] = os.environ.get('APP', 'app.py')
 app.config['RUN_HOST'] = os.environ.get('RUN_HOST', '0.0.0.0')
-app.config['RUN_PORT'] = os.environ.get('RUN_PORT', 4000)
+app.config['RUN_PORT'] = os.environ.get('RUN_PORT', 5000)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'secret')
 app.config['JWT_ALGORITHM'] = os.environ.get('JWT_ALGORITHM', 'HS256')
 app.config['SPEC_FORMAT'] = 'json'
@@ -46,5 +46,5 @@ app.register_blueprint(rating, url_prefix='/api/ratings')
 app.register_blueprint(role, url_prefix='/api/roles')
 app.register_blueprint(user, url_prefix='/api/users')
 
-if __name__ == '__main__':
-    app.run(host=app.config['RUN_HOST'], port=app.config['RUN_PORT'])
+# if __name__ == '__main__':
+#     app.run(host=app.config['RUN_HOST'], port=app.config['RUN_PORT'])

@@ -139,6 +139,7 @@ class GamesOut(Schema):
 class GamesQuery(Schema):
     offset = Integer(load_default=0)
     limit = Integer(load_default=20)
+    search = String(load_default='')
     
 
 class GenreIn(Schema):

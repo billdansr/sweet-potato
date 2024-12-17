@@ -68,13 +68,14 @@ def create_game(files_data, headers_data):
 def read_games(query_data):
     offset = query_data.get('offset')
     limit = query_data.get('limit')
+    search = query_data.get('search')
 
     count = query_db('SELECT COUNT(*) FROM "games";', one=True)['COUNT(*)']
 
     next = url_for('game.read_games', offset=offset + limit, limit=limit, _external=True) if offset + limit < count else None
     previous = url_for('game.read_games', offset=offset - limit, limit=limit, _external=True) if  offset - limit >= 0 else None
 
-    results = [dict(result) for result in query_db('SELECT "id", "title" FROM "games" LIMIT ? OFFSET ?;', (limit, offset,))] or abort(404, detail="No games found")
+    results = [dict(result) for result in query_db('SELECT "id", "title" FROM "games" WHERE "title" LIKE ? LIMIT ? OFFSET ?;', (f'%{search}%', limit, offset,))] or abort(404, detail="No games found")
 
     for game in results:
         game['url'] = url_for('game.read_game', id=game['id'], _external=True)

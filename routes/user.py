@@ -26,7 +26,7 @@ def read_user(id):
                             (id,), one=True) or abort(404, detail='User not found'))
     
     result['created_at'] = datetime.fromtimestamp(result['created_at'], timezone.utc)
-    result['avatar'] = url_for('read_upload', filename=result['avatar'], _external=True)
+    result['avatar'] = url_for('read_upload', filename=result['avatar'], _external=True) if result['avatar'] else None
 
     return result, 200
 

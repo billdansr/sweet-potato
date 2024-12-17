@@ -50,11 +50,24 @@
                         "format": "date",
                         "type": "string"
                     },
+                    "headquarters": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
                     "id": {
                         "type": "integer"
                     },
                     "name": {
                         "type": "string"
+                    },
+                    "roles": {
+                        "items": {
+                            "additionalProperties": {},
+                            "type": "object"
+                        },
+                        "type": "array"
                     }
                 },
                 "required": [
@@ -725,8 +738,21 @@
                             "application/json": {
                                 "example": {
                                     "founding_date": "1889-09-23",
+                                    "headquarters": [
+                                        "Kyoto, Japan"
+                                    ],
                                     "id": 1,
-                                    "name": "Nintendo"
+                                    "name": "Nintendo",
+                                    "roles": [
+                                        {
+                                            "name": "Developer",
+                                            "url": "https://example.com/roles/1"
+                                        },
+                                        {
+                                            "name": "Publisher",
+                                            "url": "https://example.com/roles/2"
+                                        }
+                                    ]
                                 },
                                 "schema": {
                                     "$ref": "#/components/schemas/CompanyOut"
@@ -2761,7 +2787,7 @@
     },
     "servers": [
         {
-            "url": "http://192.168.1.7:5001/"
+            "url": "http://192.168.1.7/"
         }
     ],
     "tags": [

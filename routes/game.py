@@ -110,7 +110,7 @@ def read_game(id):
         company['url'] = url_for('company.read_company', id=company['company_id'], _external=True)
         del company['company_id']
 
-    result['release_date'] = datetime.fromtimestamp(result['release_date'], tz=timezone.utc) if result['release_date'] else None
+    result['release_date'] = datetime.fromtimestamp(result['release_date'], timezone.utc) if result['release_date'] else None
     result['genres'] = genres
     result['platforms'] = platforms
     result['companies'] = companies

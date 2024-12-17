@@ -19,6 +19,8 @@ DROP VIEW IF EXISTS "view_top_rated_games";
 DROP VIEW IF EXISTS "view_game_genres";
 DROP VIEW IF EXISTS "view_game_platforms";
 DROP VIEW IF EXISTS "view_game_companies";
+DROP VIEW IF EXISTS "view_game_ratings";
+DROP VIEW IF EXISTS "view_company_roles";
 DROP VIEW IF EXISTS "view_company_headquarters";
 DROP TRIGGER IF EXISTS "trigger_update_user_profile_timestamp";
 DROP TRIGGER IF EXISTS "trigger_update_rating_timestamp";

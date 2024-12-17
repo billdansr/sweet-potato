@@ -72,8 +72,8 @@ def read_games(query_data):
 
     count = query_db('SELECT COUNT(*) FROM "games";', one=True)['COUNT(*)']
 
-    next = url_for('game.read_games', offset=offset + limit, limit=limit, _external=True) if offset + limit < count else None
-    previous = url_for('game.read_games', offset=offset - limit, limit=limit, _external=True) if  offset - limit >= 0 else None
+    next = url_for('game.read_games', offset=offset + limit, limit=limit, search=search or None, _external=True) if offset + limit < count else None
+    previous = url_for('game.read_games', offset=offset - limit, limit=limit, search=search or None, _external=True) if  offset - limit >= 0 else None
 
     results = [dict(result) for result in query_db('SELECT "id", "title" FROM "games" WHERE "title" LIKE ? LIMIT ? OFFSET ?;', (f'%{search}%', limit, offset,))] or abort(404, detail="No games found")
 

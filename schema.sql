@@ -19,6 +19,7 @@ DROP VIEW IF EXISTS "view_top_rated_games";
 DROP VIEW IF EXISTS "view_game_genres";
 DROP VIEW IF EXISTS "view_game_platforms";
 DROP VIEW IF EXISTS "view_game_companies";
+DROP VIEW IF EXISTS "view_company_headquarters";
 DROP TRIGGER IF EXISTS "trigger_update_user_profile_timestamp";
 DROP TRIGGER IF EXISTS "trigger_update_rating_timestamp";
 DROP TRIGGER IF EXISTS "trigger_create_profile_after_user_creation";
@@ -220,6 +221,19 @@ INNER JOIN "games" ON "games"."id" = "ratings"."game_id"
 INNER JOIN "users" ON "users"."id" = "ratings"."user_id"
 INNER JOIN "user_profiles" ON "user_profiles"."user_id" = "users"."id";
 
+CREATE VIEW "view_company_headquarters" AS
+SELECT "headquarters"."location", "headquarters"."company_id"
+FROM "headquarters"
+INNER JOIN "companies" ON "companies"."id" = "headquarters"."company_id";
+
+CREATE VIEW "view_company_roles" AS
+SELECT "companies"."id" AS "company_id",
+    "companies"."name" AS "company",
+    "roles"."id" AS "role_id",
+    "roles"."name" AS "role"
+FROM "companies"
+INNER JOIN "company_roles" ON "company_roles"."company_id" = "companies"."id"
+INNER JOIN "roles" ON "roles"."id" = "company_roles"."role_id";
 
 CREATE TRIGGER "trigger_update_user_profile_timestamp"
 AFTER UPDATE

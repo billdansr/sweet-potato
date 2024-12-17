@@ -25,7 +25,7 @@ def create_game(files_data):
     companies = files_data.get('companies')
     media = files_data.get('media')
 
-    game_id = query_db('INSERT INTO "games" ("title", "description", "release_date") VALUES (?, ?, UNIXEPOCH(?));', 
+    game_id = query_db('INSERT INTO "games" ("title", "description", "release_date") VALUES (?, ?, unixepoch(?));', 
             (title, description, release_date,)) if not query_db('SELECT "title" FROM "games" WHERE "title" = ? LIMIT 1;', (title,), one=True) else abort(409, detail={"field": "title", "issue": f"Game title already exists: {title}"})
     
     if genres:
@@ -95,35 +95,20 @@ def read_game(id):
     result = dict(query_db('SELECT "id", "title", "description", "release_date" FROM "games" WHERE "id" = ?;', 
                 (id,), one=True) or abort(404, detail='Game not found'))
     
-    genres = [dict(genre) for genre in query_db('''SELECT "genres"."name" , "genres"."id"
-                                                FROM "genres"
-                                                INNER JOIN "game_genres" 
-                                                ON "game_genres"."genre_id" = "genres"."id"
-                                                WHERE "game_genres"."game_id" = ?;''', 
-                                                (id,), one=False)]
+    genres = [dict(genre) for genre in query_db('SELECT "genre" AS "name", "genre_id" FROM "view_game_genres" WHERE "game_id" = ?;', (id,))]
     for genre in genres:
-        genre['url'] = url_for('genre.read_genre', id=genre['id'], _external=True)
-        del genre['id']
+        genre['url'] = url_for('genre.read_genre', id=genre['genre_id'], _external=True)
+        del genre['genre_id']
 
-    platforms = [dict(platform) for platform in query_db('''SELECT "platforms"."name" , "platforms"."id"
-                                                        FROM "platforms"
-                                                        INNER JOIN "game_platforms"
-                                                        ON "game_platforms"."platform_id" = "platforms"."id"
-                                                        WHERE "game_platforms"."game_id" = ?;''',
-                                                        (id,), one=False)]
+    platforms = [dict(platform) for platform in query_db('SELECT "platform" AS "name" , "platform_id" FROM "view_game_platforms" WHERE "game_id" = ?;', (id,))]
     for platform in platforms:
-        platform['url'] = url_for('platform.read_platform', id=platform['id'], _external=True)
-        del platform['id']
+        platform['url'] = url_for('platform.read_platform', id=platform['platform_id'], _external=True)
+        del platform['platform_id']
 
-    companies = [dict(company) for company in query_db('''SELECT "companies"."name" , "companies"."id"
-                                                    FROM "companies"
-                                                    INNER JOIN "game_companies"
-                                                    ON "game_companies"."company_id" = "companies"."id"
-                                                    WHERE "game_companies"."game_id" = ?;''',
-                                                    (id,), one=False)]
+    companies = [dict(company) for company in query_db('SELECT "company" AS "name" , "company_id" FROM "view_game_companies" WHERE "game_id" = ?;', (id,))]
     for company in companies:
-        company['url'] = url_for('company.read_company', id=company['id'], _external=True)
-        del company['id']
+        company['url'] = url_for('company.read_company', id=company['company_id'], _external=True)
+        del company['company_id']
 
     result['release_date'] = datetime.fromtimestamp(result['release_date'], tz=timezone.utc) if result['release_date'] else None
     result['genres'] = genres
@@ -154,7 +139,7 @@ def update_game(id, files_data):
     if description:
         query_db('UPDATE "games" SET "description" = ? WHERE "id" = ?;', (description, id,))
     if release_date:
-        query_db('UPDATE "games" SET "release_date" = UNIXEPOCH(?) WHERE "id" = ?;', (release_date, id,))
+        query_db('UPDATE "games" SET "release_date" = unixepoch(?) WHERE "id" = ?;', (release_date, id,))
     if genres:
         query_db('DELETE FROM "game_genres" WHERE "game_id" = ?;', (id,))
         for genre in genres:

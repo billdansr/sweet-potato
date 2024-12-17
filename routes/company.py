@@ -23,8 +23,8 @@ def create_company(json_data):
 @company.doc(description='Retrieve list companies', responses=[200, 404])
 @company.output(CompaniesOut(many=True), 200, example=CompaniesOut.example())
 def read_companies():
-    results = [dict(result) for result in query_db('SELECT "name", "id" FROM "companies"')] or abort(404, detail='Companies not found')
-    print(results)
+    results = [dict(result) for result in query_db('SELECT "name", "id" FROM "companies";')] or abort(404, detail='Companies not found')
+
     for result in results:
         result['url'] = url_for('company.read_company', id=result['id'], _external=True)
         del result['id']
@@ -37,23 +37,16 @@ def read_companies():
 @company.doc(description='Single company', responses=[200, 404])
 @company.output(CompanyOut, 200, example=CompanyOut.example())
 def read_company(id):
-    result = dict(query_db('SELECT "id", "name", "founding_date" FROM "companies" WHERE "id" = ?', (id,), one=True) or abort(404, detail='Company not found'))
+    result = dict(query_db('SELECT "id", "name", "founding_date" FROM "companies" WHERE "id" = ?;', (id,), one=True) or abort(404, detail='Company not found'))
 
-    headquarters = [dict(headquarter) for headquarter in query_db('''SELECT "headquarters"."location"
-                                                                FROM "headquarters"
-                                                                LEFT JOIN "companies"
-                                                                ON "companies"."id" = "headquarters"."company_id"
-                                                                WHERE "companies"."id" = ?''', 
-                                                                (id,))]
+    headquarters = []
+    for location in query_db('SELECT "location" FROM "view_company_headquarters" WHERE "company_id" = ?;', (id,)):
+        headquarters.append(location['location'])
     
-    roles = [dict(role) for role in query_db('''SELECT "roles"."name", "roles"."id" 
-                                            FROM "roles"
-                                            INNER JOIN "company_roles"
-                                            ON "roles"."id" = "company_roles"."role_id"
-                                            WHERE "company_roles"."company_id" = ?''', (id,))]
+    roles = [dict(role) for role in query_db('SELECT "role_id", "role" AS "name" FROM "view_company_roles" WHERE "company_id" = ?;', (id,))]
     for role in roles:
-        role['url'] = url_for('role.read_role', id=role['id'], _external=True)
-        del role['id']
+        role['url'] = url_for('role.read_role', id=role['role_id'], _external=True)
+        del role['role_id']
     
     result['headquarters'] = headquarters
     result['roles'] = roles
@@ -76,7 +69,7 @@ def update_company(id, json_data):
     if name:
         query_db('UPDATE "companies" SET "name" = ? WHERE "id" = ?;', (name, id,)) or abort(404, detail='Company not found')
     if founding_date:
-        query_db('UPDATE "companies" SET "founding_date" = UNIXEPOCH(?) WHERE "id" = ?;', (founding_date, id,))
+        query_db('UPDATE "companies" SET "founding_date" = unixepoch(?) WHERE "id" = ?;', (founding_date, id,))
     if headquarters:
         query_db('DELETE FROM "headquarters" WHERE "company_id" = ?;', (id,))
         for location in headquarters:

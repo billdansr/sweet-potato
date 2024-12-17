@@ -233,13 +233,26 @@ class CompanyOut(Schema):
     id = Integer(required=True)
     name = String(required=True)
     founding_date = Date()
+    headquarters = List(String)
+    roles = List(Dict)
 
     @staticmethod
     def example():
         return {
             'id': 1,
             'name': 'Nintendo',
-            'founding_date': '1889-09-23'
+            'founding_date': '1889-09-23',
+            'headquarters': ['Kyoto, Japan'],
+            'roles': [
+                {
+                    'name': 'Developer',
+                    'url': 'https://example.com/roles/1'
+                },
+                {
+                    'name': 'Publisher',
+                    'url': 'https://example.com/roles/2'
+                }
+            ]
         }
     
 

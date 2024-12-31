@@ -24,11 +24,11 @@ app.config['UPLOAD_DIR'] = os.path.join(app.instance_path, 'upload')
 init_app(app)
 
 CORS(app, resources={
-    r'/api/*': {
+    r'/*': {
         'origins': [
             'http://localhost:5000',
             'http://127.0.0.1:5000',
-            'https://sweet-potato-git-main-dgumarangshakti-gmailcoms-projects.vercel.app/',
+            'https://sweet-potato-git-main-dgumarangshakti-gmailcoms-projects.vercel.app',
         ],
         'supports_credentials': True,
     }

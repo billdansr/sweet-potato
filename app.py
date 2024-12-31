@@ -23,7 +23,16 @@ app.config['UPLOAD_DIR'] = os.path.join(app.instance_path, 'upload')
 
 init_app(app)
 
-CORS(app)
+CORS(app, resources={
+    r'/api/*': {
+        'origins': [
+            'http://localhost:5000',
+            'http://127.0.0.1:5000',
+            'https://sweet-potato-git-main-dgumarangshakti-gmailcoms-projects.vercel.app/',
+        ],
+        'supports_credentials': True,
+    }
+})
 
 # Create directory if it doesn't exist
 os.makedirs(app.instance_path, exist_ok=True)

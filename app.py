@@ -32,7 +32,7 @@ CORS(app, resources={
             'http://192.168.1.36',
         ],
         'supports_credentials': True,
-        "methods": ["GET", "POST", "OPTIONS"],  # Include OPTIONS
+        'methods': ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],  # Include OPTIONS
     }
 })
 

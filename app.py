@@ -27,9 +27,8 @@ init_app(app)
 
 cors = CORS(app, resources={
     r'/*': {
-        'origins': ['*'],
+        'origins': ['https://sweet-potato-git-main-dgumarangshakti-gmailcoms-projects.vercel.app'],
         'supports_credentials': True,
-        'send_wildcard': True,
     }
 })
 

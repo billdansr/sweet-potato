@@ -49,6 +49,7 @@ CREATE TABLE "games" (
     "title" TEXT NOT NULL UNIQUE,
     "description" TEXT,
     "release_date" INTEGER,
+    "thumbnail" TEXT,
     PRIMARY KEY("id")
 );
 
@@ -63,7 +64,7 @@ CREATE TABLE "media" (
 CREATE TABLE "ratings" (
     "user_id" INTEGER,
     "game_id" INTEGER,
-    "score" INTEGER NOT NULL DEFAULT 0 CHECK ("score" BETWEEN 0 AND 10),
+    "score" REAL NOT NULL DEFAULT 0 CHECK ("score" BETWEEN 0 AND 5),
     "review" TEXT,
     "created_at" INTEGER DEFAULT (strftime('%s', 'now')),
     "updated_at" INTEGER,

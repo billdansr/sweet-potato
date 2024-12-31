@@ -1,5 +1,5 @@
 from apiflask import Schema
-from apiflask.fields import String, Integer, Date, URL, List, Dict, File, DateTime
+from apiflask.fields import String, Integer, Date, URL, List, Dict, File, DateTime, Float
 from apiflask.schemas import EmptySchema
 from apiflask.validators import FileSize, FileType, Range
 
@@ -62,6 +62,7 @@ class GameIn(Schema):
     platforms = List(String)
     companies = List(String)
     media = List(File(validate=[FileType(['.png', '.jpg', '.jpeg', '.gif', '.mp4']), FileSize(max='100 MB')]), allow_none=True)
+    thumbnail = File(validate=[FileType(['.png', '.jpg', '.jpeg']), FileSize(max='100 MB')], allow_none=True)
 
 
 class GameOut(Schema):
@@ -69,10 +70,12 @@ class GameOut(Schema):
     title = String(required=True)
     description = String()
     release_date = Date(allow_none=True)
+    thumbnail = String()
     media = String()
     genres = List(Dict)
     platforms = List(Dict)
     companies = List(Dict)
+    average_rating = Float(validate=Range(min=0, max=5))
 
     @staticmethod
     def example():
@@ -81,6 +84,7 @@ class GameOut(Schema):
             'title': 'The Legend of Zelda: Breath of the Wild',
             'description': 'The Legend of Zelda: Breath of the Wild is an action-adventure game developed and published by Nintendo for the Nintendo Switch and Wii U.',
             'release_date': '2017-03-03',
+            'thumbnail': 'https://example.com/image.jpg',
             'media': 'https://example.com/1/media',
             'genres': [
                 {
@@ -107,7 +111,8 @@ class GameOut(Schema):
                     'name': 'Nintendo',
                     'url': 'https://example.com/companies/1'
                 }
-            ]
+            ],
+            'average_rating': 4.5
         }
 
 
@@ -331,7 +336,7 @@ class UpdatedSchema(Schema):
 
 class RatingIn(Schema):
     game_id = Integer(required=True)
-    score = Integer(required=True, validate=Range(min=0, max=10))
+    score = Integer(required=True, validate=Range(min=0, max=5))
     review = String(allow_none=True)
 
     @staticmethod
@@ -346,7 +351,7 @@ class RatingOut(Schema):
     avatar = URL(allow_none=True)
     user = String(required=True)
     game = String(required=True)
-    score = Integer(required=True, validate=Range(min=0, max=10))
+    score = Integer(required=True, validate=Range(min=0, max=5))
     review = String(allow_none=True)
     created_at = DateTime()
     updated_at = DateTime(allow_none=True)

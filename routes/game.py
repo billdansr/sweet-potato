@@ -24,9 +24,12 @@ def create_game(files_data, headers_data):
     platforms = files_data.get('platforms')
     companies = files_data.get('companies')
     media = files_data.get('media')
+    thumbnail = files_data.get('thumbnail')
 
-    game_id = query_db('INSERT INTO "games" ("title", "description", "release_date") VALUES (?, ?, strftime(\'%s\', ?));', 
-            (title, description, release_date,)) if not query_db('SELECT "title" FROM "games" WHERE "title" = ? LIMIT 1;', (title,), one=True) else abort(409, detail={"field": "title", "issue": f"Game title already exists: {title}"})
+    thumbnail_filename = secure_filename(datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S%z') + '_' + thumbnail.filename)
+    thumbnail.save(os.path.join(current_app.config['UPLOAD_DIR'], thumbnail_filename))
+    game_id = query_db('INSERT INTO "games" ("title", "description", "release_date", "thumbnail") VALUES (?, ?, strftime(\'%s\', ?), ?);', 
+            (title, description, release_date, thumbnail_filename,)) if not query_db('SELECT "title" FROM "games" WHERE "title" = ? LIMIT 1;', (title,), one=True) else abort(409, detail={"field": "title", "issue": f"Game title already exists: {title}"})
     
     if genres:
         for genre in genres:
@@ -93,7 +96,7 @@ def read_games(query_data):
 @game.doc(description='Single game', responses=[200, 404])
 @game.output(GameOut, 200, example=GameOut.example())
 def read_game(id):
-    result = dict(query_db('SELECT "id", "title", "description", "release_date" FROM "games" WHERE "id" = ?;', 
+    result = dict(query_db('SELECT "id", "title", "description", "release_date", "thumbnail" FROM "games" WHERE "id" = ?;', 
                 (id,), one=True) or abort(404, detail='Game not found'))
     
     genres = [dict(genre) for genre in query_db('SELECT "genre" AS "name", "genre_id" FROM "view_game_genres" WHERE "game_id" = ?;', (id,))]
@@ -116,6 +119,8 @@ def read_game(id):
     result['platforms'] = platforms
     result['companies'] = companies
     result['media'] = url_for('game.read_game_media', id=id, _external=True)
+    result['thumbnail'] = url_for('read_upload', filename=result['thumbnail'], _external=True)
+    result['average_rating'] = query_db('SELECT AVG("score") FROM "ratings" WHERE "game_id" = ?;', (id,), one=True)['AVG("score")']
 
     return result, 200
 
@@ -134,6 +139,7 @@ def update_game(id, files_data, headers_data):
     platforms = files_data.get('platforms')
     companies = files_data.get('companies')
     media = files_data.get('media')
+    thumbnail = files_data.get('thumbnail')
 
     if title:
         query_db('UPDATE "games" SET "title" = ? WHERE "id" = ?;', (title, id,)) or abort(404, detail='Game not found')
@@ -166,6 +172,8 @@ def update_game(id, files_data, headers_data):
         query_db('DELETE FROM "media" WHERE "game_id" = ?;', (id,))
         for media_file in media:
             query_db('INSERT INTO "media" ("game_id", "filename") VALUES (?, ?);', (id, media_file,))
+    if thumbnail:
+        query_db('UPDATE "games" SET "thumbnail" = ? WHERE "id" = ?;', (thumbnail, id,))
     
     query_db('COMMIT;')
 

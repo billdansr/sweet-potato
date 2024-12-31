@@ -47,7 +47,7 @@ def read_role(id):
 @role.input(AuthorizationHeader, location='headers')
 @role.input(RoleIn, location='json', example=RoleIn.example())
 @role.output(EmptySchema, 204)
-def update_role(id, json_data):
+def update_role(id, json_data, headers_data):
     query_db('UPDATE "roles" SET "name" = ? WHERE "id" = ?;', (json_data['name'], id,)) or abort(404, detail='Role not found')
     query_db('COMMIT;')
     return '', 204

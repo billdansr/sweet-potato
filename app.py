@@ -29,8 +29,10 @@ CORS(app, resources={
             'http://localhost:5000',
             'http://127.0.0.1:5000',
             'https://sweet-potato-git-main-dgumarangshakti-gmailcoms-projects.vercel.app',
+            'http://192.168.1.36',
         ],
         'supports_credentials': True,
+        "methods": ["GET", "POST", "OPTIONS"],  # Include OPTIONS
     }
 })
 

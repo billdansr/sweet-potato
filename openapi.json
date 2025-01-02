@@ -128,6 +128,12 @@
                         "nullable": true,
                         "type": "string"
                     },
+                    "thumbnail": {
+                        "format": "binary",
+                        "nullable": true,
+                        "type": "string",
+                        "x-maximum": "100 MB"
+                    },
                     "title": {
                         "type": "string"
                     }
@@ -139,6 +145,11 @@
             },
             "GameOut": {
                 "properties": {
+                    "average_rating": {
+                        "maximum": 5.0,
+                        "minimum": 0.0,
+                        "type": "number"
+                    },
                     "companies": {
                         "items": {
                             "additionalProperties": {},
@@ -172,6 +183,9 @@
                     "release_date": {
                         "format": "date",
                         "nullable": true,
+                        "type": "string"
+                    },
+                    "thumbnail": {
                         "type": "string"
                     },
                     "title": {
@@ -313,7 +327,7 @@
                         "type": "string"
                     },
                     "score": {
-                        "maximum": 10,
+                        "maximum": 5,
                         "minimum": 0,
                         "type": "integer"
                     }
@@ -343,7 +357,7 @@
                         "type": "string"
                     },
                     "score": {
-                        "maximum": 10,
+                        "maximum": 5,
                         "minimum": 0,
                         "type": "integer"
                     },
@@ -406,10 +420,19 @@
             },
             "Token": {
                 "properties": {
+                    "is_admin": {
+                        "maximum": 1,
+                        "minimum": 0,
+                        "type": "integer"
+                    },
                     "token": {
                         "type": "string"
                     }
                 },
+                "required": [
+                    "is_admin",
+                    "token"
+                ],
                 "type": "object"
             },
             "Updated": {
@@ -887,6 +910,15 @@
                             "default": 20,
                             "type": "integer"
                         }
+                    },
+                    {
+                        "in": "query",
+                        "name": "search",
+                        "required": false,
+                        "schema": {
+                            "default": "",
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -1108,6 +1140,7 @@
                         "content": {
                             "application/json": {
                                 "example": {
+                                    "average_rating": 4.5,
                                     "companies": [
                                         {
                                             "name": "Nintendo",
@@ -1138,6 +1171,7 @@
                                         }
                                     ],
                                     "release_date": "2017-03-03",
+                                    "thumbnail": "https://example.com/image.jpg",
                                     "title": "The Legend of Zelda: Breath of the Wild"
                                 },
                                 "schema": {
@@ -1914,49 +1948,7 @@
                 ]
             }
         },
-        "/api/ratings/": {
-            "get": {
-                "description": "List ratings",
-                "parameters": [],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "example": {
-                                    "avatar": "https://example.com/avatar.png",
-                                    "created_at": "2021-01-01T00:00:00Z",
-                                    "game": "The Legend of Zelda: Breath of the Wild",
-                                    "review": "This game is amazing!",
-                                    "score": 5,
-                                    "updated_at": "2021-01-01T00:00:00Z",
-                                    "user": "ohayou"
-                                },
-                                "schema": {
-                                    "items": {
-                                        "$ref": "#/components/schemas/RatingOut"
-                                    },
-                                    "type": "array"
-                                }
-                            }
-                        },
-                        "description": "Successful response"
-                    },
-                    "404": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPError"
-                                }
-                            }
-                        },
-                        "description": "Not Found"
-                    }
-                },
-                "summary": "Get Ratings",
-                "tags": [
-                    "Rating"
-                ]
-            },
+        "/api/ratings": {
             "post": {
                 "description": "Create rating",
                 "parameters": [
@@ -1976,7 +1968,7 @@
                             "example": {
                                 "game_id": 1,
                                 "review": "This game is amazing!",
-                                "score": 10
+                                "score": 5
                             },
                             "schema": {
                                 "$ref": "#/components/schemas/RatingIn"
@@ -2046,6 +2038,50 @@
                     }
                 ],
                 "summary": "Create Rating",
+                "tags": [
+                    "Rating"
+                ]
+            }
+        },
+        "/api/ratings/": {
+            "get": {
+                "description": "List ratings",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "avatar": "https://example.com/avatar.png",
+                                    "created_at": "2021-01-01T00:00:00Z",
+                                    "game": "The Legend of Zelda: Breath of the Wild",
+                                    "review": "This game is amazing!",
+                                    "score": 5,
+                                    "updated_at": "2021-01-01T00:00:00Z",
+                                    "user": "ohayou"
+                                },
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/RatingOut"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "Successful response"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    }
+                },
+                "summary": "Get Ratings",
                 "tags": [
                     "Rating"
                 ]
@@ -2145,7 +2181,7 @@
                             "example": {
                                 "game_id": 1,
                                 "review": "This game is amazing!",
-                                "score": 10
+                                "score": 5
                             },
                             "schema": {
                                 "$ref": "#/components/schemas/RatingIn"
@@ -2209,9 +2245,9 @@
                 ]
             }
         },
-        "/api/roles/api/roles": {
+        "/api/roles/": {
             "get": {
-                "description": "Retrieve list roles",
+                "description": "List roles",
                 "parameters": [],
                 "responses": {
                     "200": {
@@ -2333,7 +2369,7 @@
                 ]
             }
         },
-        "/api/roles/api/roles/{id}": {
+        "/api/roles/{id}": {
             "delete": {
                 "description": "Delete a role",
                 "parameters": [
@@ -2654,6 +2690,7 @@
                         "content": {
                             "application/json": {
                                 "example": {
+                                    "is_admin": 1,
                                     "token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiYWRtaW4iOjAsImV4cCI6MTczNDM1MTMzMi45MjYzOTh9.Dh--bIms6bq6UseB11eGUvCeNwfb-ub0vD4Jq5LXlN8"
                                 },
                                 "schema": {
@@ -2685,6 +2722,69 @@
                     }
                 },
                 "summary": "Login",
+                "tags": [
+                    "Authentication"
+                ]
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "description": "Get current user",
+                "parameters": [
+                    {
+                        "description": "Authorization header in the format: Bearer <access_token>",
+                        "in": "header",
+                        "name": "authorization",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "example": {
+                                    "avatar": "https://example.com/avatar.png",
+                                    "id": 1,
+                                    "name": "ohayou",
+                                    "username": "ohayou"
+                                },
+                                "schema": {
+                                    "$ref": "#/components/schemas/UserOut"
+                                }
+                            }
+                        },
+                        "description": "Successful response"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPError"
+                                }
+                            }
+                        },
+                        "description": "Authentication error"
+                    },
+                    "422": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationError"
+                                }
+                            }
+                        },
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "summary": "Get Me",
                 "tags": [
                     "Authentication"
                 ]
@@ -2787,7 +2887,7 @@
     },
     "servers": [
         {
-            "url": "http://192.168.1.7/"
+            "url": "http://192.168.1.9:5000/"
         }
     ],
     "tags": [

@@ -5,12 +5,14 @@ from apiflask.validators import FileSize, FileType, Range
 
 
 class Token(Schema):
-    token = String()
+    token = String(required=True)
+    is_admin = Integer(required=True, validate=Range(min=0, max=1))
 
     @staticmethod
     def example():
         return {
-            "token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiYWRtaW4iOjAsImV4cCI6MTczNDM1MTMzMi45MjYzOTh9.Dh--bIms6bq6UseB11eGUvCeNwfb-ub0vD4Jq5LXlN8"
+            "token": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiYWRtaW4iOjAsImV4cCI6MTczNDM1MTMzMi45MjYzOTh9.Dh--bIms6bq6UseB11eGUvCeNwfb-ub0vD4Jq5LXlN8",
+            "is_admin": 1
         }
 
 
@@ -343,7 +345,7 @@ class RatingIn(Schema):
     def example():
         return {
             'game_id': 1,
-            'score': 10,
+            'score': 5,
             'review': 'This game is amazing!'
         }
     

@@ -6,7 +6,7 @@ from schemas import RatingIn, RatingOut, CreatedSchema, UpdatedSchema, Authoriza
 rating = APIBlueprint('rating', __name__)
 
 
-@rating.post('/')
+@rating.post('')
 @rating.auth_required(auth)
 @rating.doc(description='Create rating', responses=[201, 404, 409])
 @rating.input(AuthorizationHeader, location='headers')
@@ -18,13 +18,16 @@ def create_rating(json_data, headers_data):
     score = json_data.get('score')
     review = json_data.get('review')
 
+    print('hi')
+    print(user)
+
     if query_db('SELECT * FROM "ratings" WHERE "user_id" = ? AND "game_id" = ?;', (user['id'], game_id), one=True):
         abort(409, detail='You have already rated this game.')
 
     if not query_db('SELECT * FROM "games" WHERE "id" = ?;', (game_id,), one=True):
         abort(404, detail='Game not found.')
 
-    rating_id = query_db('INSERT INTO "ratings" ("user_id", "game_id", "score", "review" VALUES (?, ?, ?, ?);', 
+    rating_id = query_db('INSERT INTO "ratings" ("user_id", "game_id", "score", "review") VALUES (?, ?, ?, ?);', 
                             (user['id'], game_id, score, review))
     
     query_db('COMMIT;')

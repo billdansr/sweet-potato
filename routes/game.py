@@ -10,7 +10,7 @@ from werkzeug.utils import secure_filename
 game = APIBlueprint('game', __name__)
 
 
-@game.post('/')
+@game.post('')
 @game.auth_required(auth, roles=['admin'])
 @game.doc(description='Create a new game', responses=[201, 409, 422])
 @game.input(AuthorizationHeader, location='headers')
@@ -26,8 +26,8 @@ def create_game(files_data, headers_data):
     media = files_data.get('media')
     thumbnail = files_data.get('thumbnail')
 
-    thumbnail_filename = secure_filename(datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S%z') + '_' + thumbnail.filename)
-    thumbnail.save(os.path.join(current_app.config['UPLOAD_DIR'], thumbnail_filename))
+    thumbnail_filename = secure_filename(datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S%z') + '_' + thumbnail) if thumbnail else None
+    if thumbnail_filename: thumbnail.save(os.path.join(current_app.config['UPLOAD_DIR'], thumbnail_filename))
     game_id = query_db('INSERT INTO "games" ("title", "description", "release_date", "thumbnail") VALUES (?, ?, strftime(\'%s\', ?), ?);', 
             (title, description, release_date, thumbnail_filename,)) if not query_db('SELECT "title" FROM "games" WHERE "title" = ? LIMIT 1;', (title,), one=True) else abort(409, detail={"field": "title", "issue": f"Game title already exists: {title}"})
     
@@ -119,8 +119,9 @@ def read_game(id):
     result['platforms'] = platforms
     result['companies'] = companies
     result['media'] = url_for('game.read_game_media', id=id, _external=True)
-    result['thumbnail'] = url_for('read_upload', filename=result['thumbnail'], _external=True)
     result['average_rating'] = query_db('SELECT AVG("score") FROM "ratings" WHERE "game_id" = ?;', (id,), one=True)['AVG("score")']
+    if result['thumbnail']:
+        result['thumbnail'] = url_for('read_upload', filename=result['thumbnail'], _external=True)
 
     return result, 200
 
@@ -153,7 +154,7 @@ def update_game(id, files_data, headers_data):
             if genre.strip():
                 query_db('INSERT INTO "game_genres" ("game_id", "genre_id") VALUES (?, (SELECT "id" FROM "genres" WHERE "name" = ?));',
                             (id, genre,)) if query_db('SELECT "name" FROM "genres" WHERE "name" = ?;', (genre,), one=True) else abort(422, detail={"field": "genres", "issue": f"Genre does not exists: {genre}"})
-            else: abort(422, detail={"field": "genres", "issue": f"Value is not valid: {genre}"})
+            else: abort(422, message='Genre is not valid.', detail={"field": "genres", "issue": f"Value is not valid: {genre}"})
     if platforms:
         query_db('DELETE FROM "game_platforms" WHERE "game_id" = ?;', (id,))
         for platform in platforms:

@@ -23,13 +23,13 @@ def verify_token(token):
         payload = jwt.decode(token.encode("utf-8"), current_app.config['SECRET_KEY'])
 
         if datetime.now(timezone.utc).timestamp() > payload['exp']:
-            abort(401, message='Access token has expired.', detail='Access token has expired.')
+            abort(401, message='Access token expired', detail='Access token has expired.')
 
         id = payload['id']
         
         user = query_db('SELECT * FROM "users" WHERE "id" = ? LIMIT 1;', (id,), one=True)
     except JoseError:
-        abort(401, detail='Invalid access token')
+        abort(401, message='Invalid token', detail='Invalid access token')
     return user
 
 

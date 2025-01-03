@@ -26,7 +26,7 @@ def create_game(files_data, headers_data):
     media = files_data.get('media')
     thumbnail = files_data.get('thumbnail')
 
-    thumbnail_filename = secure_filename(datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S%z') + '_' + thumbnail) if thumbnail else None
+    thumbnail_filename = secure_filename(datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S%z') + '_' + thumbnail.filename) if thumbnail else None
     if thumbnail_filename: thumbnail.save(os.path.join(current_app.config['UPLOAD_DIR'], thumbnail_filename))
     game_id = query_db('INSERT INTO "games" ("title", "description", "release_date", "thumbnail") VALUES (?, ?, strftime(\'%s\', ?), ?);', 
             (title, description, release_date, thumbnail_filename,)) if not query_db('SELECT "title" FROM "games" WHERE "title" = ? LIMIT 1;', (title,), one=True) else abort(409, detail={"field": "title", "issue": f"Game title already exists: {title}"})

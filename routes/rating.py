@@ -13,7 +13,7 @@ rating = APIBlueprint('rating', __name__)
 @rating.input(AuthorizationHeader, location='headers')
 @rating.input(RatingIn, location='json', example=RatingIn.example())
 @rating.output(CreatedSchema, 201, example=CreatedSchema.example())
-def create_rating(json_data):
+def create_rating(json_data, headers_data):
     user = auth.current_user
     game_id = json_data.get('game_id')
     score = json_data.get('score')
